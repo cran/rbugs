@@ -12,9 +12,9 @@ rbugs(data, inits, paramSet, model,
       n.thin = max(1, floor(n.chains * (n.iter - n.burnin)/1000)),
       debug = FALSE,
       bugs = Sys.getenv("BUGS"),
-      workingDir = getwd(),
-      bugsWorkingDir = workingDir,
-      useWine = FALSE, wine = Sys.getenv("WINE"))
+      workingDir = NULL, 
+      bugsWorkingDir = getwd(),
+      useWine = FALSE, wine = Sys.getenv("WINE"), verbose = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -38,6 +38,7 @@ rbugs(data, inits, paramSet, model,
     Windows system though wine. }
   \item{useWine}{ a logical value with "TRUE" meaning wine is used }
   \item{wine}{ if useWine==TRUE, the full name of wine }
+  \item{verbose}{ if TRUE, print the log file from BUGS}
 }
 \value{
   A list of MCMC outputs with length \code{nChains}.

@@ -65,4 +65,33 @@ format4Bugs <- function (dataList, digits=5){
 #   ifelse(status == 1, 0, time)
 # }
 
+## get drive mapping table from ~/.wine/config
+driveMap <- function(config) {
+  if (!file.exists(config)) return (NULL);
+  con <- readLines(config)
+  con <- con[- grep("^;", con)]
+  drive <- con[grep("^\\[Drive ", con)]
+  drive <- substr(drive, 8, 8)
+  drive <- paste(drive, ":", sep="")
+  path <- con[grep("Path", con)]
+  len <- length(drive)
+  path <- path[1:len]
+  dir <- sapply(path, 
+                 function(x) {
+                   foo <- unlist(strsplit(x, "\""))
+                   foo[length(foo)]
+                 })
+  data.frame(drive = I(drive), path = I(dir), row.names=NULL)
+}
+
+
+## translate windows dir to native dir
+driveTr <- function(windir, DriveTable) {
+##  .DriveTable <- driveMap(file.path(Sys.getenv("HOME"), ".wine/config"))
+##  win.dr <- unlist(strsplit(windir, ":"))[1]
+  win.dr <- substr(windir, 1, 2)
+  ind <- pmatch(toupper(win.dr), DriveTable$drive)
+  native.dr <- DriveTable$path[ind]
+  sub(win.dr, native.dr, windir)
+}
 

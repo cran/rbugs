@@ -7,7 +7,7 @@
 \usage{
 genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin,
               model.file, data.file, inits.files,
-              workingDir=getwd(), bugsWorkingDir=workingDir,
+              workingDir=NULL, bugsWorkingDir=getwd(),
               script, debug = FALSE, useWine = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.

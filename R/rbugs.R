@@ -1,6 +1,6 @@
 #### configurations  12/15/2003
 ## BUGS stores the executable of bugs
-## workingDir is the directory to save all files, default is tempdir()
+## workingDir is the directory to save all files, default is ??tempdir()??
 ## bugsWorkingDir is the directory for wine to use windows type directory
 ## WINE stores the executable of wine
 ## useWine = TRUE if use wine
@@ -15,12 +15,13 @@ rbugs <- function(data, inits, paramSet, model,
                   debug=FALSE,
                   bugs=Sys.getenv("BUGS"),
                   ##"c:/Program Files/WinBUGS14/WinBUGS14.exe",
-                  workingDir = getwd(),
+                  workingDir = NULL, #getwd(),
                   ##"/var/scratch/jyan/c/tmp", # native
-                  bugsWorkingDir = workingDir,
+                  bugsWorkingDir = getwd(),
                   ##"c:/tmp",
                   useWine = FALSE, 
-                  wine = Sys.getenv("WINE")
+                  wine = Sys.getenv("WINE"),
+                  verbose = FALSE
                   ## "/var/scratch/jyan/wine/wine-20031016/wine"
                   ){
   ##  start.time <- Sys.time ()
@@ -36,26 +37,38 @@ rbugs <- function(data, inits, paramSet, model,
     ## how to check the existence of WinBUGS???
   }
   else warning("This function has not been tested on mac-os.")
+  
+  ## setup workingDir 
+  if (is.null(workingDir)) {
+    if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
+    else workingDir <- bugsWorkingDir
+  }
   ## prepare the model file by 
   ## making a copy of model to the working directory
+  if (!file.exists(model)) stop("Model file doesn't exits.")
   model.file <- paste(workingDir, "model.txt", sep="/")
   file.copy(model, model.file, overwrite=TRUE)
+
   ## prepare the data file
   data.file <- paste(workingDir, "data.txt", sep="/")
   genDataFile(data, data.file)
+
   ## prepare the inits files
   inits.file.stem <- paste(workingDir, "init", sep="/")
   genInitsFile(n.chains, inits, inits.file.stem)
   inits.files <- paste(inits.file.stem, 1:n.chains, ".txt", sep="")
+
   ## prepare the script file
   script.file <- paste(workingDir, "script.txt", sep="/")
   genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin,
                 model.file, data.file, inits.files,
                 workingDir, bugsWorkingDir,
                 script.file, debug, useWine)
+
   ## run bugs
   if (useWine) script.file <- gsub(workingDir, bugsWorkingDir, script.file)
-  runBugs(bugs, script.file, useWine, wine)
+  runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, verbose)
+
   ## collect the output
   out <- getBugsOutput(n.chains, workingDir)
   out
@@ -93,9 +106,9 @@ genBugsScript <- function(paramSet,
                           model.file,
                           data.file,
                           inits.files,
-                          workingDir=getwd(),
+                          workingDir=NULL, #getwd(),
                           ## needs to be readable for BUGS
-                          bugsWorkingDir=workingDir, 
+                          bugsWorkingDir=getwd(), 
                           script, #output
                           debug=FALSE, useWine=FALSE) {
   if (n.chains != length(inits.files)) stop("length(inits.files) should equal n.chains.")
@@ -104,7 +117,11 @@ genBugsScript <- function(paramSet,
   ## add deviance to the paramSet list
   paramSet <- c(paramSet, "deviance")
 
-  
+  ## setup workingDir 
+  if (is.null(workingDir)) {
+    if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
+    else workingDir <- bugsWorkingDir
+  }
   ## necessary if useWine == TRUE:
   if (useWine) {
     model.file <- sub(workingDir, bugsWorkingDir, model.file)
@@ -113,12 +130,12 @@ genBugsScript <- function(paramSet,
       inits.files[i] <- sub(workingDir, bugsWorkingDir, inits.files[i])
   }
   
-  history <- paste (bugsWorkingDir, "history.txt", sep="/")
-  coda  <- paste (bugsWorkingDir, "coda", sep="/")
+  ##  history <- paste(bugsWorkingDir, "history.txt", sep="/")
+  coda  <- paste(bugsWorkingDir, "coda", sep="/")
   logodc <- paste(bugsWorkingDir, "log.odc", sep="/")
   logfile <- paste(bugsWorkingDir, "log.txt", sep="/")
-  initlist <- paste ("inits (", 1:n.chains, ", '", inits.files, "')\n", sep="")
-  savelist <- paste ("set (", paramSet, ")\n", sep="")
+  initlist <- paste("inits (", 1:n.chains, ", '", inits.files, "')\n", sep="")
+  savelist <- paste("set (", paramSet, ")\n", sep="")
   ## write out to script.txt
   cat (
        "display ('log')\n",
@@ -127,30 +144,29 @@ genBugsScript <- function(paramSet,
        "compile (", n.chains, ")\n",
        initlist,
        "gen.inits()\n",
-       "beg (", ceiling(n.burnin/n.thin)+1, ")\n",
+       "beg (", ceiling(n.burnin / n.thin) + 1, ")\n",
        "thin.updater (", n.thin, ")\n",
        savelist,
+       ## some try update before dic.set()
+       "update (", ceiling(n.burnin / n.thin), ")\n",
        "dic.set()\n",
-       "update (", ceiling(n.iter/n.thin), ")\n",
+       "update (", ceiling((n.iter - n.burnin) / n.thin), ")\n",
        "stats (*)\n",
        "dic.stats()\n",
-       "history (*, '", history, "')\n",
+       ## "history (*, '", history, "')\n",
        "coda (*, '", coda, "')\n",
        "save ('", logodc, "')\n", 
        "save ('", logfile, "')\n", file=script, sep="", append=FALSE)
   if (!debug) cat ("quit ()\n", file=script, append=TRUE)
-  sims.files <- paste ("coda", 1:n.chains, ".txt", sep="")
-#  for (i in 1:n.chains)
-#    cat ("Bugs did not run correctly.\n", file=sims.files[i], append=FALSE)
 }
 
 
 
 #### run bugs
 runBugs <- function(bugs=Sys.getenv("BUGS"),
-                    script,
+                    script, n.chains, workingDir,
                     useWine=FALSE,
-                    wine = Sys.getenv("WINE")) {
+                    wine = Sys.getenv("WINE"), verbose = TRUE) {
 #  BUGS <- Sys.getenv("BUGS")
 #  if (!file.exists(BUGS)) stop(paste(BUGS, "does not exists."))
   if (is.na(pmatch("\"", bugs)))bugs <- paste("\"", bugs, "\"", sep="")
@@ -171,8 +187,22 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
     command <- paste(command, ">", wine.warn, " 2>&1 ")
   }
   
+  ## clean up previous coda files8dd
+  coda.files <- paste ("coda", 1:n.chains, ".txt", sep="")
+  coda.files <- c("codaIndex.txt", coda.files)
+  coda.files <- file.path(workingDir, coda.files)
+  for (i in coda.files) {
+    ## cat ("Bugs did not run correctly.\n", file=coda.files[i], append=FALSE)
+   if (file.exists(i)) file.remove(i) 
+  }
   ## execute it!
-  system(command)
+  err <- system(command)
+  if (err == -1) stop("System call to BUGS failed.")
+  ## show log
+  if (verbose) file.show(file.path(workingDir, "log.txt"))
+
+  if (!file.exists(coda.files[1])) 
+    stop("BUGS stopped before getting to coda.")
 }
 
 
