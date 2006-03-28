@@ -5,12 +5,13 @@
   Collect the MCMC samples from BUGS.
 }
 \usage{
-getBugsOutput(n.chains, workingDir)
+getBugsOutput(n.chains, workingDir, linbugs = TRUE)
 }
 \arguments{
   \item{n.chains}{ The number of chains BUGS had run.}
   \item{workingDir}{ A character string specifying the name of the
     directory where the output files are saved.}
+  \item{linbugs}{ If TRUE, linbugs is used. }
 }
 \details{
   This function assumes that under \code{\workingDir}, there is a coda

@@ -1,0 +1,290 @@
+#
+#	This is the BUGS scripting language
+#
+#	There are two vesions of the CP code in the scripting language
+#
+#	The first is used within the GUI interface, the second with Linux and ClassicBUGS
+#
+#	The GUI version of the script language manipulates the GUI's dialog box and can be used in
+#	conjunction with the GUI
+#
+#	The commands in the script language can take integer valued parameters denoted by i and string
+#	value parameters denoted by s. If there are more than one parameter of one type the posfix 0, 1 etc
+#	is added in a left to right order
+#
+
+
+
+#	check model in file s
+modelCheck(s)
+"BugsCmds.SetFilePath('^0' ); BugsCmds.ParseGuard; BugsCmds.ParseFile"
+"BugsEmbed.SetFilePath( '^0' ); BugsEmbed.ParseGuard; BugsEmbed.Parse"
+
+#	load data in files s
+modelData(s)
+"BugsCmds.SetFilePath( '^0' ); BugsCmds.LoadDataGuard; BugsCmds.LoadDataFile"
+"BugsEmbed.SetFilePath( '^0' ); BugsEmbed.LoadDataGuard; BugsEmbed.LoadData"
+
+#	compile model using 1 chain
+modelCompile ()	
+"BugsCmds.CompileGuard; BugsCmds.specificationDialog.numChains := ^0; BugsCmds.Compile"
+"BugsEmbed.CompileGuard; BugsEmbed.numChains := 1; BugsEmbed.Compile"
+  
+#	compile model using i chains
+modelCompile(i)
+"BugsCmds.CompileGuard;BugsCmds.specificationDialog.numChains  := ^0;BugsCmds.Compile"
+"BugsEmbed.CompileGuard; BugsEmbed.numChains := ^0; BugsEmbed.Compile"  
+
+#	load initial values for current chain from file s
+modelInits(s)	
+"BugsCmds.SetFilePath( '^0' ); BugsCmds.LoadInitsGuard; BugsCmds.LoadInitsFile"
+"BugsEmbed.SetFilePath('^0' ); BugsEmbed.LoadInitsGuard; BugsEmbed.LoadInits"
+
+#	load initial values for chaini  from file s
+modelInits(s,i)	
+"BugsCmds.SetFilePath( '^0' );BugsCmds.LoadInitsGuard; BugsCmds.specificationDialog.chain := ^1; BugsCmds.LoadInitsFile"
+"BugsEmbed.SetFilePath( '^0' ); BugsEmbed.LoadInitsGuard ; BugsEmbed.chain := ^1; BugsEmbed.LoadInits"
+ 
+#	generate initial values
+modelGenInits()	
+"BugsCmds.GenerateInitsGuard;BugsCmds.GenerateInits"
+"BugsEmbed.GenerateInitsGuard;BugsEmbed.GenerateInits" 
+ 
+#	update model i iterations
+modelUpdate(i)	
+"BugsCmds.UpdateGuard;BugsCmds.updateDialog.updates  := ^0;BugsCmds.Update"
+"BugsEmbed.UpdateGuard ; BugsEmbed.updates := ^0; BugsEmbed.Update"
+ 
+#	update model i0 iteration with prospective thin of i1
+modelUpdate(i, i)
+"BugsCmds.UpdateGuard ;BugsCmds.updateDialog.updates  := ^0; BugsCmds.updateDialog.thin := ^1; BugsCmds.Update"
+"BugsEmbed.UpdateGuard ; BugsEmbed.updates := ^0 ; BugsEmbed.thin  := ^1; BugsEmbed.Update" 
+
+#	update model i iteration with over-relaxation s
+modelUpdate(i, s)
+"BugsCmds.UpdateGuard ;BugsCmds.updateDialog.updates  := ^0; BugsCmds.updateDialog.overRelax := ^1; BugsCmds.Update"
+"BugsEmbed.UpdateGuard ; BugsEmbed.updates := ^0 ; BugsEmbed.overRelax  := ^1; BugsEmbed.Update" 
+ 
+#	update model i0 iteration with prospective thin of i1 and over-relaxation s
+modelUpdate(i, i, s)	
+"BugsCmds.UpdateGuard ;BugsCmds.updateDialog.updates  := ^0;BugsCmds.updateDialog.thin := ^1; 
+BugsCmds.updateDialog.overRelax := ^2; BugsCmds.Update"
+"BugsEmbed.UpdateGuard ; BugsEmbed.updates := ^0; BugsEmbed.thin  := ^1; BugsEmbed.overRelax  := ^2; BugsEmbed.Update" 
+
+#	writes out current state of sampler to windowsin WinBUGS, does nothing in ClassicBUGS
+modelChains()
+"BugsEmbed.UpdateGuard ; BugsCmds.WriteChains"
+""
+
+#	writes out current state of sampler to files with stem name s
+modelChains(s)	
+"BugsEmbed.UpdateGuard ;BugsEmbed.WriteChains('^0')"
+"BugsEmbed.UpdateGuard ;BugsEmbed.WriteChains('^0')"
+
+#	sets the first seed of the random number generator to i
+modelSetRN(i)	
+"BugsCmds.rnDialog.index := 1; BugsCmds.rnDialog.new := ^0; BugsCmds.SetRNGuard; BugsCmds.SetRNState"
+"BugsEmbed.index := 1; BugsEmbed.new := ^0; BugsEmbed.SetRNGuard; BugsEmbed.SetRNState"
+
+#	sets the i0 seed of the random number generator to i1
+modelSetRN(i, i)	
+"BugsCmds.rnDialog.index := ^0; BugsCmds.rnDialog.new := ^1; BugsCmds.SetRNGuard; BugsCmds.SetRNState"
+"BugsEmbed.index := ^0; BugsEmbed.new := ^1;BugsEmbed.SetRNGuard; BugsEmbed.SetRNState"
+
+#	gets the state of the random number generator
+modelGetRN(i)	
+"BugsCmds.rnDialog.index := ^0; BugsCmds.GetRNState"
+"BugsEmbed.index := ^0; BugsEmbed.GetRNState"
+
+#	sets where output is sent to s for WinBUGS, does nothing for ClassicBUGS
+modelDisplay(s)	
+"BugsCmds.SetDisplay('^0')"
+""
+
+#	sets the precision to which real numbers are output
+modelPrecision(i)
+"BugsCmds.displayDialog.precision :=  ^0; BugsMappers.SetPrec(^0)"
+"BugsMappers.SetPrec(^0)"
+
+#	causes the BUGS program to close
+modelQuit()
+"HostMenus.Exit "
+"BugsEmbed.Quit"
+
+#	displays the modules of the BUGS software currently loaded
+modelModules()
+"BugsCmds.Modules"
+"BugsEmbed.Modules"
+
+#	saves a log of output to file s
+modelSaveLog(s)	
+"BugsCmds.SaveLog('^0' )"
+"BugsFiles.SaveLog('^0' )"
+
+#	runs a script of commands stored in file s
+modelScript(s)
+"BugsEmbed.Script('^0')
+"BugsEmbed.Script('^0')
+
+#	sets the adaptive phase of updaters created by factory s to i
+modelSetAP(s, i)
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.AdaptivePhaseGuard;UpdaterMethods.SetAdaptivePhase(^1)"
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.AdaptivePhaseGuard;UpdaterMethods.SetAdaptivePhase(^1)"
+
+#	sets the number of iterations allowed in updaters created by factory s to i
+modelSetIts(s, i)
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.IterationsGuard;UpdaterMethods.SetIterations(^1)"
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.IterationsGuard;UpdaterMethods.SetIterations(^1)"
+
+#	sets the amount of over-relaxation used by updaters created by factory s to i
+modelSetOR(s, i)
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.OverRelaxationGuard;UpdaterMethods.SetOverRelaxation(^1)"
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.OverRelaxationGuard;UpdaterMethods.SetOverRelaxation(^1)"
+
+#	enables factory s to create updaters
+modelEnable(s)
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.Enable"
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.Enable"
+
+#	disables factory s creating updaters
+modelDisable(s)
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.Disable"
+"UpdaterMethods.SetFactory('^0');UpdaterMethods.Disable"
+
+#	sets the begin iteration for sample monitors to i
+samplesBeg(i)	
+"SamplesCmds.dialog.beg :=  ^0"
+"SamplesEmbed.beg :=  ^0"
+ 
+#	sets the end iteration for sample monitors to i
+samplesEnd(i)	
+"SamplesCmds.dialog.end := ^0"
+"SamplesEmbed.end := ^0"
+
+#	sets the retrospective thin for sample monitors to i
+samplesThin(i )	
+"SamplesCmds.dialog.thin :=  ^0"
+"SamplesEmbed.thin :=  ^0" 
+
+#	sets the first chain for sample monitors to i
+samplesFirstChain(i)	
+"SamplesCmds.dialog.firstChain :=  ^0"
+"SamplesEmbed.firstChain :=  ^0" 
+ 
+#	sets the last chain for sample monitors to i
+samplesLastChain(i)	
+"SamplesCmds.dialog.lastChain := ^0"
+"SamplesEmbed.lastChain := ^0"
+
+#	sets a sample monitor for variable s
+samplesSet(s)	
+"SamplesCmds.SetVariable('^0');SamplesCmds.SetGuard;SamplesCmds.Set"
+"SamplesEmbed.SetVariable('^0');SamplesEmbed.SetGuard;SamplesEmbed.Set"
+
+#	clears the sample monitor for variable s
+samplesClear(s)	
+"SamplesCmds.SetVariable('^0');SamplesCmds.HistoryGuard;SamplesCmds.Clear" 
+"SamplesEmbed.SetVariable('^0');SamplesEmbed.HistoryGuard;SamplesEmbed.Clear"
+
+#	displays summary statistics for sample monitor s
+samplesStats(s)	
+"SamplesCmds.SetVariable('^0');SamplesCmds.StatsGuard;SamplesCmds.Stats"  
+"SamplesEmbed.SetVariable('^0');SamplesEmbed.StatsGuard;SamplesEmbed.Stats"  
+
+#	displays CODA output for sample monitor s in WinBUGS, does nothing in ClassicBUGS
+samplesCoda(s)
+"SamplesCmds.SetVariable('^0');SamplesCmds.StatsGuard;SamplesCmds.CODA()"
+""
+
+#	writes CODA output for sample monitor s0 to files with stem name s1
+samplesCoda(s, s)	
+"SamplesCmds.SetVariable('^0');SamplesCmds.StatsGuard;SamplesCmds.CODAFiles('^1')"
+"SamplesEmbed.SetVariable('^0');SamplesEmbed.StatsGuard;SamplesEmbed.CODA ('^1')"
+
+#	displays density estimates for sample monitor s in WinBUGS, does nothing in ClassicBUGS
+samplesDensity(s)	
+"SamplesCmds.SetVariable('^0' );SamplesCmds.StatsGuard;SamplesDensity.Install;SamplesCmds.Plot('Density')"
+""
+
+#	displays auto correlation for sample monitor s in WinBUGS, does nothing in ClassicBUGS
+samplesAutoC(s)	
+"SamplesCmds.SetVariable('^0');SamplesCmds.StatsGuard;SamplesCorrelat.Install;SamplesCmds.Plot('AutoC')"
+""
+
+#	displays dynamic traces for sample monitor s in WinBUGS, does nothing in ClassicBUGS
+samplesTrace(s)	
+"SamplesCmds.SetVariable('^0');SamplesCmds.StatsGuard;SamplesTrace.Install;SamplesCmds.Plot('Trace')"
+""
+ 
+#	displays history plots for sample monitor s in WinBUGS, does nothing in ClassicBUGS
+samplesHistory(s)	
+"SamplesCmds.SetVariable('^0');SamplesCmds.StatsGuard;SamplesHistory.Install;SamplesCmds.Plot('History')"
+""
+
+#	displays culmative quantile plots for sample monitor s in WinBUGS, does nothing in ClassicBUGS
+samplesQuantiles(s)	
+"SamplesCmds.SetVariable('^0');SamplesCmds.StatsGuard;SamplesQuantiles.Install;SamplesCmds.Plot('Quantiles')"
+""
+ 
+#	displays bgr convergence diagnostic plots for sample monitor s in WinBUGS, does nothing in ClassicBUGS
+samplesBgr(s)	
+"SamplesCmds.SetVariable('^0');SamplesCmds.BGRGuard;SamplesDiagnostics.Install;SamplesCmds.Plot('BGR diagnostic')"
+""  
+
+#	sets summary monitor for variable s
+summarySet(s)	
+"SummaryCmds.SetVariable('^0');SummaryCmds.SetGuard;SummaryCmds.Set"
+"SummaryEmbed.SetVariable('^0');SummaryEmbed.SetGuard;SummaryEmbed.Set" 
+ 
+#	displays summary statistics for summary monitor s
+summaryStats(s)	
+"SummaryCmds.SetVariable('^0' );SummaryCmds.StatsGuard;SummaryCmds.Stats"
+"SummaryEmbed.SetVariable('^0' );SummaryEmbed.StatsGuard;SummaryEmbed.Stats" 
+ 
+#	displays mean for summary monitor s
+summaryMean(s)	
+"SummaryCmds.SetVariable('^0');SummaryCmds.StatsGuard;SummaryCmds.Means"
+"SummaryEmbed.SetVariable('^0');SummaryEmbed.StatsGuard;SummaryEmbed.Means" 
+ 
+#	clears summary monitor s
+summaryClear(s)	
+"SummaryCmds.SetVariable('^0');SummaryCmds.StatsGuard;SummaryCmds.Clear"
+"SummaryEmbed.SetVariable('^0');SummaryEmbed.StatsGuard;SummaryEmbed.Clear"
+
+#	sets ranks monitor for variable s
+ranksSet(s)	
+"RanksCmds.SetVariable('^0');RanksCmds.SetGuard;RanksCmds.Set "
+"RanksEmbed.SetVariable('^0');RanksEmbed.SetGuard;RanksEmbed.Set"
+
+#	displays rank information for ranks monitor for variable s
+ranksStats(s)	
+"RanksCmds.SetVariable('^0' );RanksCmds.StatsGuard;RanksCmds.Stats"
+"RanksEmbed.SetVariable('^0' );RanksEmbed.StatsGuard;RanksEmbed.Stats" 
+
+#	clears ranks monitor s
+ranksClear(s)	
+"RanksCmds.SetVariable('^0');RanksCmds.StatsGuard;RanksCmds.Clear"
+"RanksEmbed.SetVariable('^0');RanksEmbed.StatsGuard;RanksEmbed.Clear"
+ 
+#	displays histograms for ranks monitor for variable s in WinBUGS, does nothing in ClassicBUGS
+ranksHistogram(s)	
+"RanksCmds.SetVariable('^0');RanksDialog.StatsGuard;RanksCmds.Draw"
+"" 
+
+#	sets monitor for DIC
+dicSet()	
+"DevianceCmds.SetVariable('*'); DevianceCmds.SetGuard; DevianceCmds.Set"
+"DevianceEmbed.SetVariable('*'); DevianceEmbed.SetGuard ; DevianceEmbed.Set "
+
+#	displays DIC statistics
+dicStats()	
+"DevianceCmds.SetVariable('*'); DevianceCmds.StatsGuard; DevianceCmds.Stats"
+"DevianceEmbed.SetVariable('*');DevianceEmbed.StatsGuard; DevianceEmbed.Stats" 
+
+#	clears monitor fro DIC
+dicClear ()
+"DevianceCmds.SetVariable('*'); DevianceCmds.StatsGuard ; DevianceCmds.Clear"
+"DevianceEmbed.SetVariable('*'); DevianceEmbed.StatsGuard ; DevianceEmbed.Clear"
+
+END
+

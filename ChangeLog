@@ -1,0 +1,28 @@
+2006-03-28 (0.3-4) Jun Yan  <jyan@stat.uiowa.edu>
+
+	* added random number seed as an option to rbugs and 
+	genBugsScript.
+
+2006-03-24 (0.3-3)  Jun Yan  <jyan@.stat.uiowa.edu>
+
+	* added support for linbugs (OpenBUGS on Linux). 
+	Support for WinBUGS via Wine is no longer necessary.
+	* added an option `genFilesOnly' for function `rbugs' 
+	to generate script files, inits files, data file, and 
+	model file in a given directory.
+	* dic is now an option. 
+	It was always computed in previous releases, but sometimes 
+	computing dic may be very time-consuming, for example, 
+	in spatial modeling. It's desirable to not to compute 
+	dic at least for exploratory analysis.
+	
+2004-05-18 (0.3-1) Jun Yan  <jyan@stat.uiowa.edu>
+
+	* added error checking for system call to BUGS
+	* added error checking for existence of coda files
+	* added automated generation of drive mapping table for wine
+
+	
+2004-05-10 (0.2-2) Jun Yan  <jyan@stat.uiowa.edu>
+
+	* first public release

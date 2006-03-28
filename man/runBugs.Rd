@@ -6,7 +6,8 @@
 }
 \usage{
 runBugs(bugs=Sys.getenv("BUGS"), script, n.chains, workingDir,
-        useWine=FALSE, wine=Sys.getenv("WINE"), verbose = TRUE)
+        useWine=FALSE, wine=Sys.getenv("WINE"),
+        linbugs = TRUE, verbose = TRUE)
 }
 \arguments{
   \item{bugs}{ A character string specifying the full name (including
@@ -21,6 +22,7 @@ runBugs(bugs=Sys.getenv("BUGS"), script, n.chains, workingDir,
   \item{useWine}{ A logical value indicating if wine is to be used.}
   \item{wine}{ A character string specifying the full name (including
     path) of the wine executable.}
+  \item{linbugs} { If TRUE, linbugs is used. }
   \item{verbose}{If TRUE, print the log file from BUGS.}
 }
 \value{

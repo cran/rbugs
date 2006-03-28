@@ -1,6 +1,0 @@
-0.3-1: 
-  * added error checking for system call to BUGS
-  * added error checking for existence of coda files
-  * added automated generation of drive mapping table for wine
-
-0.2-2: first public release

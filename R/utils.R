@@ -10,20 +10,20 @@ formatData <- function (datalist){
         if (length(datalist[[i]]) == 
             1) 
             datalist.string[[i]] <- paste(names(datalist)[i], 
-                "=", as.character(datalist[[i]]), sep = "")
+                "=", as.character(datalist[[i]]), sep = "\n")
         if (is.vector(datalist[[i]]) & length(datalist[[i]]) > 
             1) 
             datalist.string[[i]] <- paste(names(datalist)[i], 
                 "=c(", paste(as.character(datalist[[i]]), collapse = ", "), 
-                ")", sep = "")
+                ")", sep = "\n")
         if (is.array(datalist[[i]])) 
             datalist.string[[i]] <- paste(names(datalist)[i], 
                 "= structure(.Data= c(", paste(as.character(as.vector(aperm(datalist[[i]]))), 
                   collapse = ", "), "), .Dim=c(", paste(as.character(dim(datalist[[i]])), 
-                  collapse = ", "), "))", sep = "")
+                  collapse = ", "), "))", sep = "\n")
     }
     datalist.tofile <- paste("list(", paste(unlist(datalist.string), 
-        collapse = ", "), ")", sep = "")
+        collapse = ", "), ")", sep = "\n")
     return(datalist.tofile)
 }
 
@@ -66,7 +66,8 @@ format4Bugs <- function (dataList, digits=5){
 # }
 
 ## get drive mapping table from ~/.wine/config
-driveMap <- function(config) {
+## with changes from Ben Bolker
+driveMap <- function(config = "~/.wine/config") {
   if (!file.exists(config)) return (NULL);
   con <- readLines(config)
   con <- con[- grep("^;", con)]
@@ -81,6 +82,7 @@ driveMap <- function(config) {
                    foo <- unlist(strsplit(x, "\""))
                    foo[length(foo)]
                  })
+  dir <- sub("%HOME%",tools::file_path_as_absolute("~"), dir)
   data.frame(drive = I(drive), path = I(dir), row.names=NULL)
 }
 
@@ -93,5 +95,57 @@ driveTr <- function(windir, DriveTable) {
   ind <- pmatch(toupper(win.dr), DriveTable$drive)
   native.dr <- DriveTable$path[ind]
   sub(win.dr, native.dr, windir)
+}
+
+
+## awk
+
+## To use awk to convert a Windows file to Unix, at the Unix prompt, enter:
+## awk '{ sub("\r$", ""); print }' winfile.txt > unixfile.txt
+
+## To convert a Unix file to Windows using awk, at the command line, enter:
+## awk 'sub("$", "\r")' unixfile.txt > winfile.txt
+
+## On some systems, the version of awk may be old and not include the function sub. If so, try the same command, but with gawk or nawk replacing awk.
+## Perl
+
+## To convert a Windows text file to a Unix text file using Perl, at the Unix shell prompt, enter:
+## perl -p -e 's/\r$//' < winfile.txt > unixfile.txt
+
+## To convert from a Unix text file to a Windows text file with Perl, at the Unix shell prompt, enter:
+## perl -p -e 's/\n/\r\n/' < unixfile.txt > winfile.txt
+
+## unix2dos <- function(unix) {
+##   ## this function somehow does not work as expected.
+##   ## why? typing the same command in a shell works though.
+##   tmp <- tempfile("tmp")
+##   on.exit(unlink(tmp))
+##   command <- paste("perl -p -e 's/\n/\r\n/' <", unix, " > ", tmp)
+##   foo <- system(command)
+##   val <- file.copy(tmp, unix, overwrite=TRUE)
+##   val
+## }
+
+trLbr <- function(unix) {
+  lines <- readLines(unix)
+  #newlines <- sub('$', '\r', lines)
+  #writeLines(newlines, unix)
+  writeLines(lines, unix, sep="\r\n")
+}
+
+filePathAsAbsolute <- function (x) {
+#  if (!file.exists(epath <- path.expand(x))) 
+#    stop(gettextf("file '%s' does not exist", x), domain = NA)
+  epath <- path.expand(x)
+  cwd <- getwd()
+  on.exit(setwd(cwd))
+  if (tools::file_test("-d", epath)) {
+    setwd(epath)
+    getwd()
+  }
+  else {
+    setwd(dirname(epath))
+    file.path(getwd(), basename(epath))
+  }
 }
 

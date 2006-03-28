@@ -43,6 +43,11 @@ schools.sim <- rbugs(data=schools.data, inits, parameters,
                      useWine=TRUE,
                      wine="/var/scratch/jyan/wine-20040408/wine",
                      debug=TRUE)
+## generate files only
+schools.sim <- rbugs(data=schools.data, inits, parameters,
+                     schools.bug, n.chains=3, n.iter=1000,
+                     bugsWorkingDir=tempdir(),
+                     linbugs=TRUE, genFilesOnly=TRUE)
 #endif
 #ifdef windows
 schools.sim <- rbugs(data=schools.data, inits, parameters,

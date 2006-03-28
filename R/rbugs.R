@@ -10,18 +10,26 @@
 
 
 rbugs <- function(data, inits, paramSet, model,
+                  ## mcmc options
                   n.chains=1, n.iter=2000, n.burnin=floor(n.iter/2),
                   n.thin=max(1, floor(n.chains*(n.iter-n.burnin)/1000)),
+                  ## monitoring options
+                  dic=FALSE,
+                  ## configuration options
                   debug=FALSE,
                   bugs=Sys.getenv("BUGS"),
                   ##"c:/Program Files/WinBUGS14/WinBUGS14.exe",
                   workingDir = NULL, #getwd(),
                   ##"/var/scratch/jyan/c/tmp", # native
-                  bugsWorkingDir = getwd(),
+                  bugsWorkingDir, # required argument
                   ##"c:/tmp",
                   useWine = FALSE, 
                   wine = Sys.getenv("WINE"),
-                  verbose = FALSE
+                  linbugs = TRUE,
+                  cleanBugsWorkingDir = FALSE,
+                  genFilesOnly = FALSE,
+                  verbose = FALSE,
+                  seed=314159
                   ## "/var/scratch/jyan/wine/wine-20031016/wine"
                   ){
   ##  start.time <- Sys.time ()
@@ -31,46 +39,74 @@ rbugs <- function(data, inits, paramSet, model,
       stop(paste("BUGS executable", bugs, "does not exists."))
   }
   else if (os.type == "unix") {
-    if (!useWine) stop ("Please set useWine = TRUE.")
-    if (!file.exists(wine))
-      stop(paste("wine executable", wine, "does not exists."))
-    ## how to check the existence of WinBUGS???
+    if (useWine) {
+      if (!file.exists(wine))
+        stop(paste("wine executable", wine, "does not exists."))
+      ## how to check the existence of WinBUGS???
+    }
+    else { ## use linbugs!
+      if (is.null(bugs)) bugs <- system("which linbugs", TRUE)
+      if (length(bugs) == 0)
+        stop(paste("BUGS executable", bugs, "does not exists."))
+    }
   }
   else warning("This function has not been tested on mac-os.")
   
-  ## setup workingDir 
+  ## setup workingDir
+  bugsWorkingDir <- filePathAsAbsolute(bugsWorkingDir)
+  if (is.null(bugsWorkingDir)) {
+    bugsWorkingDir <- tempfile("bugsWorkingDir")
+    if (!file.exists(bugwWorkingDir)) dir.create(bugsWorkingDir)
+    on.exit(if(cleanBugsWorkingDir) unlink(bugsWorkingDir, TRUE))
+  }
   if (is.null(workingDir)) {
     if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
     else workingDir <- bugsWorkingDir
   }
+  else workingDir <- filePathAsAbsolute(workingDir)
+  
   ## prepare the model file by 
   ## making a copy of model to the working directory
   if (!file.exists(model)) stop("Model file doesn't exits.")
-  model.file <- paste(workingDir, "model.txt", sep="/")
+  model.file <- file.path(workingDir, "model.txt")
   file.copy(model, model.file, overwrite=TRUE)
 
   ## prepare the data file
-  data.file <- paste(workingDir, "data.txt", sep="/")
+  data.file <- file.path(workingDir, "data.txt")
   genDataFile(data, data.file)
 
   ## prepare the inits files
-  inits.file.stem <- paste(workingDir, "init", sep="/")
+  inits.file.stem <- file.path(workingDir, "init")
   genInitsFile(n.chains, inits, inits.file.stem)
   inits.files <- paste(inits.file.stem, 1:n.chains, ".txt", sep="")
 
   ## prepare the script file
   script.file <- paste(workingDir, "script.txt", sep="/")
-  genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin,
+  genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
                 model.file, data.file, inits.files,
                 workingDir, bugsWorkingDir,
-                script.file, debug, useWine)
+                script.file, debug, useWine, linbugs, seed)
 
+  ## change line breaks from "\n" to "\r\n"
+  ## otherwise, linbugs would hang!!
+  if (linbugs) {
+    ## trLbr(script.file)
+    ## spend three hours to figure out that script file doesn't need it!
+    trLbr(model.file)
+    trLbr(data.file)
+    for (i in inits.files) trLbr(i)
+  }
+  
   ## run bugs
+  if (genFilesOnly) {
+    cat("Files are generated in", workingDir, "\n")
+    return(TRUE)
+  }
   if (useWine) script.file <- gsub(workingDir, bugsWorkingDir, script.file)
-  runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, verbose)
+  runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, linbugs, verbose)
 
   ## collect the output
-  out <- getBugsOutput(n.chains, workingDir)
+  out <- getBugsOutput(n.chains, workingDir, linbugs)
   out
 }
 
@@ -98,80 +134,90 @@ genInitsFile <- function(n.chains, inits, initsFileStem) {
 }
 
 
-genBugsScript <- function(paramSet,
-                          n.chains,
-                          n.iter,
-                          n.burnin,
-                          n.thin,
-                          model.file,
-                          data.file,
-                          inits.files,
-                          workingDir=NULL, #getwd(),
-                          ## needs to be readable for BUGS
-                          bugsWorkingDir=getwd(), 
-                          script, #output
-                          debug=FALSE, useWine=FALSE) {
-  if (n.chains != length(inits.files)) stop("length(inits.files) should equal n.chains.")
-  ## n.iter <- n.burnin + n.thin * n.keep
+## genBugsScript <- function(paramSet,
+##                           n.chains,
+##                           n.iter,
+##                           n.burnin,
+##                           n.thin,
+##                           dic,
+##                           model.file,
+##                           data.file,
+##                           inits.files,
+##                           workingDir=NULL, #getwd(),
+##                           ## needs to be readable for BUGS
+##                           bugsWorkingDir=getwd(), 
+##                           script, #output
+##                           debug=FALSE, useWine=FALSE) {
+##   if (n.chains != length(inits.files)) stop("length(inits.files) should equal n.chains.")
+##   ## n.iter <- n.burnin + n.thin * n.keep
 
-  ## add deviance to the paramSet list
-  paramSet <- c(paramSet, "deviance")
+##   ## add deviance to the paramSet list
+##   paramSet <- c(paramSet, "deviance")
 
-  ## setup workingDir 
-  if (is.null(workingDir)) {
-    if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
-    else workingDir <- bugsWorkingDir
-  }
-  ## necessary if useWine == TRUE:
-  if (useWine) {
-    model.file <- sub(workingDir, bugsWorkingDir, model.file)
-    data.file <- sub(workingDir, bugsWorkingDir, data.file)
-    for (i in 1:length(inits.files))
-      inits.files[i] <- sub(workingDir, bugsWorkingDir, inits.files[i])
-  }
+##   ## setup workingDir 
+##   if (is.null(workingDir)) {
+##     if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
+##     else workingDir <- bugsWorkingDir
+##   }
+##   ## necessary if useWine == TRUE:
+##   if (useWine) {
+##     model.file <- sub(workingDir, bugsWorkingDir, model.file)
+##     data.file <- sub(workingDir, bugsWorkingDir, data.file)
+##     for (i in 1:length(inits.files))
+##       inits.files[i] <- sub(workingDir, bugsWorkingDir, inits.files[i])
+##   }
   
-  ##  history <- paste(bugsWorkingDir, "history.txt", sep="/")
-  coda  <- paste(bugsWorkingDir, "coda", sep="/")
-  logodc <- paste(bugsWorkingDir, "log.odc", sep="/")
-  logfile <- paste(bugsWorkingDir, "log.txt", sep="/")
-  initlist <- paste("inits (", 1:n.chains, ", '", inits.files, "')\n", sep="")
-  savelist <- paste("set (", paramSet, ")\n", sep="")
-  ## write out to script.txt
-  cat (
-       "display ('log')\n",
-       "check ('", model.file, "')\n",
-       "data ('", data.file, "')\n",
-       "compile (", n.chains, ")\n",
-       initlist,
-       "gen.inits()\n",
-       "beg (", ceiling(n.burnin / n.thin) + 1, ")\n",
-       "thin.updater (", n.thin, ")\n",
-       savelist,
-       ## some try update before dic.set()
-       "update (", ceiling(n.burnin / n.thin), ")\n",
-       "dic.set()\n",
-       "update (", ceiling((n.iter - n.burnin) / n.thin), ")\n",
-       "stats (*)\n",
-       "dic.stats()\n",
-       ## "history (*, '", history, "')\n",
-       "coda (*, '", coda, "')\n",
-       "save ('", logodc, "')\n", 
-       "save ('", logfile, "')\n", file=script, sep="", append=FALSE)
-  if (!debug) cat ("quit ()\n", file=script, append=TRUE)
-}
+##   ##  history <- paste(bugsWorkingDir, "history.txt", sep="/")
+##   coda  <- paste(bugsWorkingDir, "coda", sep="/")
+##   logodc <- paste(bugsWorkingDir, "log.odc", sep="/")
+##   logfile <- paste(bugsWorkingDir, "log.txt", sep="/")
+##   initlist <- paste("inits (", 1:n.chains, ", '", inits.files, "')\n", sep="")
+##   savelist <- paste("set (", paramSet, ")\n", sep="")
+##   ## write out to script.txt
+##   cat (
+##        "display ('log')\n",
+##        "check ('", model.file, "')\n",
+##        "data ('", data.file, "')\n",
+##        "compile (", n.chains, ")\n",
+##        initlist,
+##        "gen.inits()\n",
+##        "beg (", ceiling(n.burnin / n.thin) + 1, ")\n",
+##        "thin.updater (", n.thin, ")\n",
+##        savelist,
+##        ## some try update before dic.set()
+##        "update (", ceiling(n.burnin / n.thin), ")\n",
+##        ifelse(dic, "dic.set()\n", "# dic.set()\n"),
+##        "update (", ceiling((n.iter - n.burnin) / n.thin), ")\n",
+##        "stats (*)\n",
+##        "dic.stats()\n",
+##        ## "history (*, '", history, "')\n",
+##        "coda (*, '", coda, "')\n",
+##        "save ('", logodc, "')\n", 
+##        "save ('", logfile, "')\n", file=script, sep="", append=FALSE)
+##   if (!debug) cat ("quit ()\n", file=script, append=TRUE)
+## }
 
 
 
 #### run bugs
 runBugs <- function(bugs=Sys.getenv("BUGS"),
-                    script, n.chains, workingDir,
+                    script,
+                    n.chains,
+                    workingDir,
                     useWine=FALSE,
-                    wine = Sys.getenv("WINE"), verbose = TRUE) {
+                    wine = Sys.getenv("WINE"),
+                    linbugs=TRUE,
+                    verbose = TRUE) {
 #  BUGS <- Sys.getenv("BUGS")
 #  if (!file.exists(BUGS)) stop(paste(BUGS, "does not exists."))
-  if (is.na(pmatch("\"", bugs)))bugs <- paste("\"", bugs, "\"", sep="")
-  if (is.na(pmatch("\"", script))) script <- paste("\"", script, "\"", sep="")
-  command <- paste(bugs, "/par", script)
+  if (!linbugs) {
+    if (is.na(pmatch("\"", bugs))) bugs <- paste("\"", bugs, "\"", sep="")
+    if (is.na(pmatch("\"", script))) script <- paste("\"", script, "\"", sep="")
+    command <- paste(bugs, "/par", script)
+  }
+  else {
+    command <- paste(bugs, "< ", script, "> run.out")
+  }
   if (useWine) {
     command <- paste(wine, command)
 
@@ -187,14 +233,21 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
     command <- paste(command, ">", wine.warn, " 2>&1 ")
   }
   
-  ## clean up previous coda files8dd
-  coda.files <- paste ("coda", 1:n.chains, ".txt", sep="")
-  coda.files <- c("codaIndex.txt", coda.files)
-  coda.files <- file.path(workingDir, coda.files)
+  
+  
+  ## clean up previous coda files
+  fnames <- getCodaFileNames(n.chains, workingDir, linbugs)
+  coda.files <- c(fnames$codaIndexFile, fnames$codaFiles)
+##   coda.files <- paste ("coda", 1:n.chains, ".txt", sep="")
+##   coda.files <- c("codaIndex.txt", coda.files)
+##   coda.files <- file.path(workingDir, coda.files)
   for (i in coda.files) {
     ## cat ("Bugs did not run correctly.\n", file=coda.files[i], append=FALSE)
-   if (file.exists(i)) file.remove(i) 
+   if (file.exists(i)) file.remove(i)
   }
+  log.file <- file.path(workingDir, "log.txt")
+  if (file.exists(log.file)) file.remove(log.file)
+  
   ## execute it!
   err <- system(command)
   if (err == -1) stop("System call to BUGS failed.")
@@ -207,13 +260,21 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
 
 
 #### functions to get the output
+getCodaFileNames <- function(n.chains, workingDir, linbugs) {
+  CODA <- if (linbugs) "codaCODA" else "coda"
+  INDEX <- if (linbugs) "index" else "Index"
+  CHAIN <- if (linbugs) "chain" else NULL
+  coda  <- file.path(workingDir, CODA)
+  codaFiles <- paste(coda, CHAIN, 1:n.chains, ".txt", sep="")
+  codaIndexFile <- paste(coda, INDEX, ".txt", sep="")
+  list(codaFiles=codaFiles, codaIndexFile=codaIndexFile)
+}
 
 
-
-getBugsOutput <- function(n.chains, workingDir) {
-  coda  <- paste(workingDir, "coda", sep="/")
-  codaFiles <- paste(coda, 1:n.chains, ".txt", sep="")
-  codaIndexFile <- paste(coda, "Index.txt", sep="")
+getBugsOutput <- function(n.chains, workingDir, linbugs=TRUE) {
+  fnames <- getCodaFileNames(n.chains, workingDir, linbugs)
+  codaFiles <- fnames$codaFiles
+  codaIndexFile <- fnames$codaIndexFile
   codaIndex <- read.table(codaIndexFile, header=FALSE, sep="\t", as.is=TRUE)
   n.keep <- codaIndex[1, 3] - codaIndex[1, 2] + 1
   nodes <- codaIndex[, 1]
