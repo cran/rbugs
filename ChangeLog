@@ -1,3 +1,8 @@
+2006-10-09 (0.3-5) Jun Yan  <jyan@.stat.uiowa.edu>
+
+	* changed check '(is.null(bugs))' to '(length(bugs) == 0)' in rbugs,
+	as pointed out by Simon Bonner <sbonner@stat.sfu.ca>.
+
 2006-03-28 (0.3-4) Jun Yan  <jyan@stat.uiowa.edu>
 
 	* added random number seed as an option to rbugs and 

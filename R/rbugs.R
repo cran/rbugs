@@ -45,7 +45,7 @@ rbugs <- function(data, inits, paramSet, model,
       ## how to check the existence of WinBUGS???
     }
     else { ## use linbugs!
-      if (is.null(bugs)) bugs <- system("which linbugs", TRUE)
+      if (length(bugs) == 0) bugs <- system("which linbugs", TRUE)
       if (length(bugs) == 0)
         stop(paste("BUGS executable", bugs, "does not exists."))
     }
