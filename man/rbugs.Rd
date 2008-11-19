@@ -33,24 +33,24 @@ rbugs(data, inits, paramSet, model,
   \item{n.iter}{ the number of iteration of each chain }
   \item{n.burnin}{ the length of the burn-in }
   \item{n.thin}{ thinning rate }
-  \item{dic} { if TRUE, dic will be monitored }
+  \item{dic}{ if TRUE, dic will be monitored }
   \item{debug}{ a logical value indicating whether or not closing the
     BUGS window }
   \item{bugs}{ the full name (including the path) of the BUGS executable }
   \item{workingDir}{ a directory to store all the intermediate files }
   \item{bugsWorkingDir}{ required, the nominal name of the working directory,
-    which is the same as workingDir is useWine is "FALSE". If useWine is
+    which is the same as workingDir if useWine is "FALSE". If useWine is
     "TRUE", it should be a directory which is recognizable by the
     Windows system though wine. }
   \item{useWine}{ a logical value with "TRUE" meaning wine is used }
   \item{wine}{ if useWine==TRUE, the full name of wine }
-  \item{linbugs} { if TRUE, linbugs is used }
-  \item{cleanBugsWorkingDir} { if TRUE, the generated files will be
+  \item{linbugs}{ if TRUE, linbugs is used }
+  \item{cleanBugsWorkingDir}{ if TRUE, the generated files will be
     removed from the bugsWorkingDir}
-  \item{genFilesOnly} {If TRUE, the script, data, inits, and model files
+  \item{genFilesOnly}{If TRUE, the script, data, inits, and model files
     will be generated but not run. }
   \item{verbose}{ if TRUE, print the log file from BUGS}
-  \item{seed} {an interger of random number seed}
+  \item{seed}{an interger of random number seed}
 }
 \value{
   A list of MCMC outputs with length \code{nChains}.

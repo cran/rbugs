@@ -37,6 +37,7 @@ rbugs <- function(data, inits, paramSet, model,
   if (os.type == "windows") {
     if (!file.exists(bugs))
       stop(paste("BUGS executable", bugs, "does not exists."))
+    linbugs <- FALSE
   }
   else if (os.type == "unix") {
     if (useWine) {

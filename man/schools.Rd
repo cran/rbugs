@@ -52,8 +52,8 @@ schools.sim <- rbugs(data=schools.data, inits, parameters,
 #ifdef windows
 schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
-                     bugs="e:/Program Files/WinBUGS14/WinBUGS14.exe",
-                     workingDir="c:/tmp",
+                     bugs="d:/Program Files/WinBUGS14/WinBUGS14.exe",
+                     bugsWorkingDir="e:/temp", 
                      debug=TRUE)
                      
 #endif

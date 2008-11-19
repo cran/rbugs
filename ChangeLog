@@ -1,3 +1,9 @@
+2008-11-19 (0.3-6) Jun Yan  <jyan@.stat.uconn.edu>
+
+	* changed tools::file_test to tools:::file_test in utils.R,
+	thanks to Andrew Walsh <awalsh@cs.cmu.edu>.
+
+
 2006-10-09 (0.3-5) Jun Yan  <jyan@.stat.uiowa.edu>
 
 	* changed check '(is.null(bugs))' to '(length(bugs) == 0)' in rbugs,
