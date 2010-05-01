@@ -22,7 +22,7 @@ runBugs(bugs=Sys.getenv("BUGS"), script, n.chains, workingDir,
   \item{useWine}{ A logical value indicating if wine is to be used.}
   \item{wine}{ A character string specifying the full name (including
     path) of the wine executable.}
-  \item{linbugs} { If TRUE, linbugs is used. }
+  \item{linbugs}{ If TRUE, linbugs is used. }
   \item{verbose}{If TRUE, print the log file from BUGS.}
 }
 \value{

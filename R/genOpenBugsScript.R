@@ -6,18 +6,18 @@ ScriptCommands <- function(hateWindows = TRUE) {
                 "STATS", "DICSTATS", "CODA", "SAVE",
                 "SETRN", "GETRN",
                 "QUIT", "LBR")
-  openBugs <- list("modelCheck", "modelData","modelCompile","modelInits",
-                   "modelGenInits", "samplesBeg", "modelUpdate",
-                   "samplesSet","dicSet",
-                   "samplesStats", "dicStats", "samplesCoda", "modelSaveLog",
-                   "modelSetRN", "modelGetRN",
-                   "modelQuit", "\n")
-  winBugs <- list("check", "data", "compile", "inits",
-                  "gen.inits", "beg", "update",
-                  "set", "dic.set",
-                  "stats", "dic.stats", "coda", "save",
-                  "set.seed", "get.seed",
-                  "quit", "\n")
+  openBugs <- c("modelCheck", "modelData","modelCompile","modelInits",
+                "modelGenInits", "samplesBeg", "modelUpdate",
+                "samplesSet","dicSet",
+                "samplesStats", "dicStats", "samplesCoda", "modelSaveLog",
+                "modelSetRN", "modelGetRN",
+                "modelQuit", "\n")
+  winBugs <- c("check", "data", "compile", "inits",
+               "gen.inits", "beg", "update",
+               "set", "dic.set",
+               "stats", "dic.stats", "coda", "save",
+               "set.seed", "get.seed",
+               "quit", "\n")
   comm <- if(hateWindows) openBugs else winBugs
   names(comm) <- commands
   comm
@@ -38,7 +38,9 @@ genBugsScript <-
            script, #output
            debug=FALSE,
            useWine=FALSE,
-           linbugs=TRUE, seed=314159) {
+           linbugs=TRUE,
+           seed=31 ## This number cannot be 314 or larger. How strange!
+           ) {
   if (n.chains != length(inits.files)) stop("length(inits.files) should equal n.chains.")
   ## n.iter <- n.burnin + n.thin * n.keep
 
@@ -61,8 +63,9 @@ genBugsScript <-
 
   ## attach the command list
   comm <- ScriptCommands(linbugs)
-  attach(comm)
-  on.exit(detach(comm))
+  LBR <- comm["LBR"]
+  ## attach(comm)
+  ## on.exit(detach(comm))
   
   ## setup some file names
   coda  <- file.path(bugsWorkingDir, "coda")
@@ -70,30 +73,32 @@ genBugsScript <-
   logfile <- file.path(bugsWorkingDir, "log.txt")
   ## note that the order or arguments to INITS are different
   ## in WinBUGS and OpenBUGS
-  initlist <- if (linbugs) paste(INITS, "(", "'", inits.files, "', ", 1:n.chains, ")", LBR, sep="") else paste(INITS, "(", 1:n.chains, ", '", inits.files, "')", LBR, sep="")
-  savelist <- paste(SET, "(", paramSet, ")", LBR, sep="")
+  initlist <- if (linbugs) paste(comm["INITS"], "(", "'", inits.files, "', ", 1:n.chains, ")", LBR, sep="") else paste(comm["INITS"], "(", 1:n.chains, ", '", inits.files, "')", LBR, sep="")
+  savelist <- paste(comm["SET"], "(", paramSet, ")", LBR, sep="")
   ## write out to script.txt
   nburn <- ceiling(n.burnin / n.thin)
   nsamp <- ceiling((n.iter - n.burnin) / n.thin)
   cat (
        ##"display ('log')\n",
-       CHECK, "('", model.file, "')", LBR,
-       DATA, "('", data.file, "')", LBR,
-       COMPILE, "(", n.chains, ")", LBR,
+       comm["CHECK"], "('", model.file, "')", LBR,
+       comm["DATA"], "('", data.file, "')", LBR,
+       comm["COMPILE"], "(", n.chains, ")", LBR,
+       comm["SETRN"], "(", seed, ")", LBR,
        initlist,
-       GENINITS, "()", LBR,
-       BEG, "(", nburn + 1, ")", LBR,
-       SETRN, "(", seed, ")", LBR,
-       UPDATE, "(", nburn, ", ", n.thin, ")", LBR,
+       comm["GENINITS"], "()", LBR,
+       comm["BEG"], "(", nburn + 1, ")", LBR,
+       comm["UPDATE"], "(", nburn, ", ", n.thin, ")", LBR,
        savelist,
-       if (dic) c(DICSET, "()", LBR),
-       UPDATE, "(", nsamp, ", ", n.thin, ")", LBR,
-       STATS, "('*')", LBR,
-       if (dic) c(DICSTATS, "(*)", LBR),
-       CODA, "('*', '", coda, "')", LBR,
+       if (dic) c(comm["DICSET"], "()", LBR),
+       comm["UPDATE"], "(", nsamp, ", ", n.thin, ")", LBR,
+       comm["STATS"], "('*')", LBR,
+       if (dic) c(comm["DICSTATS"], "(*)", LBR),
+       comm["CODA"], "('*', '", coda, "')", LBR,
        ## "save ('", logodc, "')\n", 
-       SAVE, "('", logfile, "')", LBR,
-       if (linbugs) c(QUIT, "()", LBR),
+       ## comm["SAVE"], "('", logfile, "')", LBR,
+       ## modelSaveLog is only available on windows.
+       if (linbugs) c(comm["QUIT"], "()", LBR)
+       else c("modelSaveLog", "('", logfile, "')", LBR),
        file=script, sep="", append=FALSE)
-  if (!debug) cat (QUIT, "()", LBR, sep="", file=script, append=TRUE)
+  if (!debug) cat (comm["QUIT"], "()", LBR, sep="", file=script, append=TRUE)
 }

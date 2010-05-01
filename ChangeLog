@@ -1,3 +1,11 @@
+2010-05-01 (0.4-0) Jun Yan  <jyan@.stat.uconn.edu>
+
+	* tuned support for OpenBUGS on linux
+	with the recent release of OpenBUGS307
+	(thanks to Christopher L DuBois <duboisc@ics.uci.edu>).
+	* deprecated support for WinBUGS and useWine.
+
+	
 2008-11-19 (0.3-6) Jun Yan  <jyan@.stat.uconn.edu>
 
 	* changed tools::file_test to tools:::file_test in utils.R,

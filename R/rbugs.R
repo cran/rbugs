@@ -46,7 +46,7 @@ rbugs <- function(data, inits, paramSet, model,
       ## how to check the existence of WinBUGS???
     }
     else { ## use linbugs!
-      if (length(bugs) == 0) bugs <- system("which linbugs", TRUE)
+      if (length(bugs) == 0) bugs <- system("which OpenBUGS", TRUE)
       if (length(bugs) == 0)
         stop(paste("BUGS executable", bugs, "does not exists."))
     }
@@ -57,7 +57,7 @@ rbugs <- function(data, inits, paramSet, model,
   bugsWorkingDir <- filePathAsAbsolute(bugsWorkingDir)
   if (is.null(bugsWorkingDir)) {
     bugsWorkingDir <- tempfile("bugsWorkingDir")
-    if (!file.exists(bugwWorkingDir)) dir.create(bugsWorkingDir)
+    if (!file.exists(bugsWorkingDir)) dir.create(bugsWorkingDir)
     on.exit(if(cleanBugsWorkingDir) unlink(bugsWorkingDir, TRUE))
   }
   if (is.null(workingDir)) {
@@ -133,71 +133,6 @@ genInitsFile <- function(n.chains, inits, initsFileStem) {
     else cat(format4Bugs(inits[[i]]), file=file, fill = TRUE)
   }
 }
-
-
-## genBugsScript <- function(paramSet,
-##                           n.chains,
-##                           n.iter,
-##                           n.burnin,
-##                           n.thin,
-##                           dic,
-##                           model.file,
-##                           data.file,
-##                           inits.files,
-##                           workingDir=NULL, #getwd(),
-##                           ## needs to be readable for BUGS
-##                           bugsWorkingDir=getwd(), 
-##                           script, #output
-##                           debug=FALSE, useWine=FALSE) {
-##   if (n.chains != length(inits.files)) stop("length(inits.files) should equal n.chains.")
-##   ## n.iter <- n.burnin + n.thin * n.keep
-
-##   ## add deviance to the paramSet list
-##   paramSet <- c(paramSet, "deviance")
-
-##   ## setup workingDir 
-##   if (is.null(workingDir)) {
-##     if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
-##     else workingDir <- bugsWorkingDir
-##   }
-##   ## necessary if useWine == TRUE:
-##   if (useWine) {
-##     model.file <- sub(workingDir, bugsWorkingDir, model.file)
-##     data.file <- sub(workingDir, bugsWorkingDir, data.file)
-##     for (i in 1:length(inits.files))
-##       inits.files[i] <- sub(workingDir, bugsWorkingDir, inits.files[i])
-##   }
-  
-##   ##  history <- paste(bugsWorkingDir, "history.txt", sep="/")
-##   coda  <- paste(bugsWorkingDir, "coda", sep="/")
-##   logodc <- paste(bugsWorkingDir, "log.odc", sep="/")
-##   logfile <- paste(bugsWorkingDir, "log.txt", sep="/")
-##   initlist <- paste("inits (", 1:n.chains, ", '", inits.files, "')\n", sep="")
-##   savelist <- paste("set (", paramSet, ")\n", sep="")
-##   ## write out to script.txt
-##   cat (
-##        "display ('log')\n",
-##        "check ('", model.file, "')\n",
-##        "data ('", data.file, "')\n",
-##        "compile (", n.chains, ")\n",
-##        initlist,
-##        "gen.inits()\n",
-##        "beg (", ceiling(n.burnin / n.thin) + 1, ")\n",
-##        "thin.updater (", n.thin, ")\n",
-##        savelist,
-##        ## some try update before dic.set()
-##        "update (", ceiling(n.burnin / n.thin), ")\n",
-##        ifelse(dic, "dic.set()\n", "# dic.set()\n"),
-##        "update (", ceiling((n.iter - n.burnin) / n.thin), ")\n",
-##        "stats (*)\n",
-##        "dic.stats()\n",
-##        ## "history (*, '", history, "')\n",
-##        "coda (*, '", coda, "')\n",
-##        "save ('", logodc, "')\n", 
-##        "save ('", logfile, "')\n", file=script, sep="", append=FALSE)
-##   if (!debug) cat ("quit ()\n", file=script, append=TRUE)
-## }
-
 
 
 #### run bugs
@@ -276,7 +211,10 @@ getBugsOutput <- function(n.chains, workingDir, linbugs=TRUE) {
   fnames <- getCodaFileNames(n.chains, workingDir, linbugs)
   codaFiles <- fnames$codaFiles
   codaIndexFile <- fnames$codaIndexFile
-  codaIndex <- read.table(codaIndexFile, header=FALSE, sep="\t", as.is=TRUE)
+  if (linbugs)  sep <- " "  else sep <- "\t"
+  codaIndex <- read.table(codaIndexFile, header=FALSE,
+                          sep=sep, as.is=TRUE)
+
   n.keep <- codaIndex[1, 3] - codaIndex[1, 2] + 1
   nodes <- codaIndex[, 1]
   n.param <- length(nodes)

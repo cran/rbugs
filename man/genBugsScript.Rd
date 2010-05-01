@@ -9,7 +9,7 @@ genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
               model.file, data.file, inits.files,
               workingDir=NULL, bugsWorkingDir=getwd(),
               script, debug = FALSE, useWine=FALSE,
-              linbugs=TRUE, seed=314159)
+              linbugs=TRUE, seed=31)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -19,7 +19,7 @@ genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
   \item{n.iter}{ The number of iterations of each chain.}
   \item{n.burnin}{ The length of the burn-in. }
   \item{n.thin}{ Thinning rate.}
-  \item{dic} {If TRUE, dic will be monitored }
+  \item{dic}{If TRUE, dic will be monitored }
   \item{model.file}{ A character string of the name of file which
     contains the model specification for BUGS. It should end with .txt
     to be recognizable by BUGS.}
@@ -52,7 +52,7 @@ genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
   directory native to the operating system and a directory recognizable
   by wine. They are the same if useWine == FALSE.
 }
-\author{ Jun Yan \email{jyan@stat.uiowa.edu}}
+\author{Jun Yan \email{jyan@stat.uconn.edu}}
 \seealso{ \code{\link{genDataFile}}, \code{\link{genInitsFile}},
   \code{\link{format4Bugs}}
 }

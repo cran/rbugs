@@ -14,7 +14,7 @@ getBugsOutput(n.chains, workingDir, linbugs = TRUE)
   \item{linbugs}{ If TRUE, linbugs is used. }
 }
 \details{
-  This function assumes that under \code{\workingDir}, there is a coda
+  This function assumes that under \code{workingDir}, there is a coda
   index file \file{codaIndex.txt}, and the coda output for
   \code{n.chains} chains are named as coda1.txt, coda2.txt, ...
 }
@@ -22,6 +22,6 @@ getBugsOutput(n.chains, workingDir, linbugs = TRUE)
   A list of matrix whose columns and rows contain the monitored
   parameters and the MCMC iterations, respectively.
 }
-\author{ Jun Yan \email{jyan@stat.uiowa.edu}}
+\author{Jun Yan \email{jyan@stat.uconn.edu}}
 \keyword{utilities}
 \keyword{interface}
