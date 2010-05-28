@@ -1,3 +1,18 @@
+2010-05-27 (0.4-1) Marcos Prates  <marcos.prates@uconn.edu>
+
+	* Fixed the support for OpenBUGS on windows
+	with the recent release of OpenBUGS310.
+	* Added the example for running OpenBugs on 
+	windows with the school and pump data.
+ 	* Fixed the example for running WinBugs on 
+	windows with the school and pump data.
+	* Fixed the example for running OpenBugs on 
+	linux with the school data.
+	* The WINE examples were not tested and the
+	WINE support will not be carried on in a soon
+	future.
+
+
 2010-05-01 (0.4-0) Jun Yan  <jyan@.stat.uconn.edu>
 
 	* tuned support for OpenBUGS on linux

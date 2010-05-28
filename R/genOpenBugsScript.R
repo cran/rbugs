@@ -39,6 +39,7 @@ genBugsScript <-
            debug=FALSE,
            useWine=FALSE,
            linbugs=TRUE,
+           Windows=TRUE, ## Modified by Marcos
            seed=31 ## This number cannot be 314 or larger. How strange!
            ) {
   if (n.chains != length(inits.files)) stop("length(inits.files) should equal n.chains.")
@@ -97,8 +98,11 @@ genBugsScript <-
        ## "save ('", logodc, "')\n", 
        ## comm["SAVE"], "('", logfile, "')", LBR,
        ## modelSaveLog is only available on windows.
-       if (linbugs) c(comm["QUIT"], "()", LBR)
-       else c("modelSaveLog", "('", logfile, "')", LBR),
+       ##if (linbugs) c(comm["QUIT"], "()", LBR)
+       if (!Windows) c(comm["QUIT"], "()", LBR), ## Modified by Marcos
+       ##else c("modelSaveLog", "('", logfile, "')", LBR),
+       if (Windows) c(comm["SAVE"], "('", logfile, "')", LBR), ## Modified by Marcos
+       if (Windows && linbugs) c(comm["QUIT"], "('yes')", LBR), ## Modified by Marcos
        file=script, sep="", append=FALSE)
-  if (!debug) cat (comm["QUIT"], "()", LBR, sep="", file=script, append=TRUE)
+  if (!debug && !linbugs) cat (comm["QUIT"], "()", LBR, sep="", file=script, append=TRUE) ## Modified by Marcos
 }

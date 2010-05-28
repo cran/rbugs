@@ -22,6 +22,6 @@ getBugsOutput(n.chains, workingDir, linbugs = TRUE)
   A list of matrix whose columns and rows contain the monitored
   parameters and the MCMC iterations, respectively.
 }
-\author{Jun Yan \email{jyan@stat.uconn.edu}}
+\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcos.prates@uconn.edu}}
 \keyword{utilities}
 \keyword{interface}

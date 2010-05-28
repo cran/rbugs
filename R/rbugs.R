@@ -8,6 +8,7 @@
 ## example usage on linux
 ## schools.sim <- rbugs(data=schools.data, inits, parameters, "schools.bug", n.chains=3, n.iter=1000, workingDir="/var/tmp/jyan/c/tmp", bugsWorkingDir="c:/tmp", useWine=T, wine="/var/scratch/jyan//wine/wine-20031016/wine", debug=T)
 
+## Changed the linbugs
 
 rbugs <- function(data, inits, paramSet, model,
                   ## mcmc options
@@ -25,19 +26,22 @@ rbugs <- function(data, inits, paramSet, model,
                   ##"c:/tmp",
                   useWine = FALSE, 
                   wine = Sys.getenv("WINE"),
-                  linbugs = TRUE,
+                  OpenBugs = TRUE, ##Modified by Marcos ##Using OpenBugs or not???
                   cleanBugsWorkingDir = FALSE,
                   genFilesOnly = FALSE,
                   verbose = FALSE,
-                  seed=314159
+                  seed=31
                   ## "/var/scratch/jyan/wine/wine-20031016/wine"
                   ){
   ##  start.time <- Sys.time ()
+  linbugs = OpenBugs ##Modified by Marcos
+  Windows = FALSE ##Modified by Marcos
   os.type <- .Platform$OS.type
   if (os.type == "windows") {
     if (!file.exists(bugs))
       stop(paste("BUGS executable", bugs, "does not exists."))
-    linbugs <- FALSE
+    #linbugs <- FALSE ##Modified by Marcos
+    Windows = TRUE ##Modified by Marcos
   }
   else if (os.type == "unix") {
     if (useWine) {
@@ -86,7 +90,7 @@ rbugs <- function(data, inits, paramSet, model,
   genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
                 model.file, data.file, inits.files,
                 workingDir, bugsWorkingDir,
-                script.file, debug, useWine, linbugs, seed)
+                script.file, debug, useWine, linbugs, Windows, seed) ##Modified by Marcos
 
   ## change line breaks from "\n" to "\r\n"
   ## otherwise, linbugs would hang!!
@@ -104,7 +108,7 @@ rbugs <- function(data, inits, paramSet, model,
     return(TRUE)
   }
   if (useWine) script.file <- gsub(workingDir, bugsWorkingDir, script.file)
-  runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, linbugs, verbose)
+  runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, linbugs, Windows, verbose)
 
   ## collect the output
   out <- getBugsOutput(n.chains, workingDir, linbugs)
@@ -143,10 +147,12 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
                     useWine=FALSE,
                     wine = Sys.getenv("WINE"),
                     linbugs=TRUE,
+                    Windows=TRUE, ## Modified by Marcos
                     verbose = TRUE) {
 #  BUGS <- Sys.getenv("BUGS")
 #  if (!file.exists(BUGS)) stop(paste(BUGS, "does not exists."))
-  if (!linbugs) {
+ # if (!linbugs) {
+  if (Windows) { ## Modified by Marcos
     if (is.na(pmatch("\"", bugs))) bugs <- paste("\"", bugs, "\"", sep="")
     if (is.na(pmatch("\"", script))) script <- paste("\"", script, "\"", sep="")
     command <- paste(bugs, "/par", script)
@@ -190,8 +196,10 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
   ## show log
   if (verbose) file.show(file.path(workingDir, "log.txt"))
 
-  if (!file.exists(coda.files[1])) 
+  if (!file.exists(coda.files[1])){
+    if (Windows) warning("Number of iterations may be to small") ## Modified by Marcos
     stop("BUGS stopped before getting to coda.")
+  }
 }
 
 

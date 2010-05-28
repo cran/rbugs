@@ -16,10 +16,10 @@ rbugs(data, inits, paramSet, model,
       workingDir = NULL, 
       bugsWorkingDir,
       useWine = FALSE, wine = Sys.getenv("WINE"),
-      linbugs = TRUE, 
+      OpenBugs = TRUE, %- Modified by Marcos
       cleanBugsWorkingDir = FALSE,
       genFilesOnly = FALSE,
-      verbose = FALSE, seed = 314159)
+      verbose = FALSE, seed = 31)%- Modified by Marcos
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,7 +44,7 @@ rbugs(data, inits, paramSet, model,
     Windows system though wine. }
   \item{useWine}{ a logical value with "TRUE" meaning wine is used }
   \item{wine}{ if useWine==TRUE, the full name of wine }
-  \item{linbugs}{ if TRUE, linbugs is used }
+  \item{OpenBugs}{ if TRUE, OpenBugs is used } %- Modified by Marcos
   \item{cleanBugsWorkingDir}{ if TRUE, the generated files will be
     removed from the bugsWorkingDir}
   \item{genFilesOnly}{If TRUE, the script, data, inits, and model files
@@ -55,10 +55,6 @@ rbugs(data, inits, paramSet, model,
 \value{
   A list of MCMC outputs with length \code{nChains}.
 }
-\examples{
-## see examples in \code{\link{pumps}} and \code{\link{schools}}
-}
-\author{
-  Jun Yan \email{jyan@stat.uiowa.edu}
-}
+\examples{ ##see examples in \code{\link{pumps}} and \code{\link{schools}}}
+\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcos.prates@uconn.edu}}
 \keyword{ interface }

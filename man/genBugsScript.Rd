@@ -9,7 +9,7 @@ genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
               model.file, data.file, inits.files,
               workingDir=NULL, bugsWorkingDir=getwd(),
               script, debug = FALSE, useWine=FALSE,
-              linbugs=TRUE, seed=31)
+              linbugs=TRUE, Windows=TRUE, seed=31)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -36,7 +36,8 @@ genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
   \item{debug}{ A logical value indicating whether or not closing the
     BUGS window after running the script.}
   \item{useWine}{ If TRUE, BUGS is used via wine.}
-  \item{linbugs}{ If TRUE, linbugs is used. }
+  \item{linbugs}{ If TRUE, OpenBugs is used. } %- Modified by Marcos
+  \item{Windows}{ If TRUE, Windows plataform is used. } %- Modified by Marcos
   \item{seed}{ An integer of random number seed.} 
 }
 \value{
@@ -52,7 +53,7 @@ genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
   directory native to the operating system and a directory recognizable
   by wine. They are the same if useWine == FALSE.
 }
-\author{Jun Yan \email{jyan@stat.uconn.edu}}
+\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcos.prates@uconn.edu}}
 \seealso{ \code{\link{genDataFile}}, \code{\link{genInitsFile}},
   \code{\link{format4Bugs}}
 }

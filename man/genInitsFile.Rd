@@ -30,7 +30,7 @@ genInitsFile(n.chains, inits, initsFileStem)
 \value{
   None.
 }
-\author{ Jun Yan \email{jyan@stat.uiowa.edu}}
+\author{ Jun Yan \email{jyan@stat.uiowa.edu} and Marcos Prates \email{marcos.prates@uconn.edu} }
 \seealso{  \code{\link{genDataFile}}, \code{\link{genBugsScript}}}
 \examples{
 ## when inits is a list:

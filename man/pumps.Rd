@@ -25,13 +25,20 @@ parameters <- c("theta", "alpha", "beta")
 
 \dontrun{
 #ifdef windows
-## Define the full name of bugs in .Renviron.
-## In .Renviron, add a line similar to this:
-##  BUGS="c:/program files/winbugs14/winbugs14.exe"
-
+## Windows using WinBugs
 pumps.sim <- rbugs(data = pumps.data, inits, parameters,
                    pumps.model, n.chains = 1, n.iter = 1000,
-                   bugs="e:/program files/winbugs14/winbugs14.exe")
+                   bugs = "C:/Program Files/WinBUGS14/WinBUGS14.exe",
+                   bugsWorkingDir="C:/TEMP/rbugs",
+                   OpenBugs = FALSE)
+
+## Windows using OpenBUGS
+pumps.sim <- rbugs(data = pumps.data, inits, parameters,
+                   pumps.model, n.chains = 1, n.iter = 1000,
+                   bugs = "C:/Program Files/OpenBugs310/OpenBugs.exe",
+                   bugsWorkingDir="C:/TEMP/rbugs",
+                   OpenBugs=TRUE)
+
 #endif
 #ifdef unix
 ## The workingDir must be a directory which can be seen by wine
@@ -39,7 +46,11 @@ pumps.sim <- rbugs(data = pumps.data, inits, parameters,
 ## Windows.
 ## The full name of the bugs and wine executables need to set.
 ## In .Renviron, add lines similar to these:
+## If using WinBugs
 ##   BUGS="c:/program files/winbugs14/winbugs14.exe"
+##   WINE="/var/scratch/jyan/wine-20040408/wine" 
+## If using OpenBUGS
+##   BUGS="c:/program files/OpenBUGS310/OpenBugs.exe"
 ##   WINE="/var/scratch/jyan/wine-20040408/wine" 
 
 pumps.sim <- rbugs(data = pumps.data, inits, parameters, 
