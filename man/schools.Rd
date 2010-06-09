@@ -71,6 +71,15 @@ schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
                      bugsWorkingDir=tempdir(),
                      OpenBugs=TRUE, genFilesOnly=TRUE)
+
+## MCMC analysis
+library("coda")
+schools.mcmc <- mcmc.list(as.mcmc(schools.sim$chain1),as.mcmc(schools.sim$chain2),
+                          as.mcmc(schools.sim$chain3))
+summary(schools.mcmc)
+effectiveSize(schools.mcmc)
+gelman.diag(schools.mcmc)
+
 #endif
 #ifdef windows
 ## Windows using WinBugs
@@ -86,7 +95,15 @@ schools.sim <- rbugs(data=schools.data, inits, parameters,
                      bugs="C:/Program Files/OpenBugs310/OpenBugs.exe",
                      bugsWorkingDir="C:/temp",
                      OpenBugs=TRUE)
-                     
+
+##MCMC analysis
+library("coda")
+schools.mcmc <- mcmc.list(as.mcmc(schools.sim$chain1),as.mcmc(schools.sim$chain2),
+                          as.mcmc(schools.sim$chain3))
+summary(schools.mcmc)
+effectiveSize(schools.mcmc)
+gelman.diag(schools.mcmc)
+              
 #endif
 
 }

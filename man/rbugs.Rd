@@ -19,7 +19,7 @@ rbugs(data, inits, paramSet, model,
       OpenBugs = TRUE, %- Modified by Marcos
       cleanBugsWorkingDir = FALSE,
       genFilesOnly = FALSE,
-      verbose = FALSE, seed = 31)%- Modified by Marcos
+      verbose = FALSE, seed = NULL)%- Modified by Marcos
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -53,7 +53,7 @@ rbugs(data, inits, paramSet, model,
   \item{seed}{an interger of random number seed}
 }
 \value{
-  A list of MCMC outputs with length \code{nChains}.
+  A list with the inforamtion of the MCMC sample and each one of the \code{nChains} .
 }
 \examples{ ##see examples in \code{\link{pumps}} and \code{\link{schools}}}
 \author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcos.prates@uconn.edu}}

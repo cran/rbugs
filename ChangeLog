@@ -1,4 +1,14 @@
-2010-05-27 (0.4-1) Marcos Prates  <marcos.prates@uconn.edu>
+2010-06-09 (0.4-2) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Set seed to be random if not specified by the
+  user.
+  * Fixed the cleanBugsWorkingDir function to delete
+   the workingdir files when selected TRUE.
+  * Changed the output design.
+  * Changed the linbugs variables to OpenBugs.
+
+
+2010-05-27 (0.4-1) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
 
 	* Fixed the support for OpenBUGS on windows
 	with the recent release of OpenBUGS310.

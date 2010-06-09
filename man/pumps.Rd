@@ -39,6 +39,12 @@ pumps.sim <- rbugs(data = pumps.data, inits, parameters,
                    bugsWorkingDir="C:/TEMP/rbugs",
                    OpenBugs=TRUE)
 
+## MCMC Analysis
+library("coda")
+pumps.mcmc <- as.mcmc(pumps.sim$chain1)
+summary(pumps.mcmc)
+effectiveSize(pumps.mcmc)
+
 #endif
 #ifdef unix
 ## The workingDir must be a directory which can be seen by wine
@@ -58,6 +64,13 @@ pumps.sim <- rbugs(data = pumps.data, inits, parameters,
                    workingDir="/var/scratch/jyan/c/tmp",
                    bugsWorkingDir="c:/tmp",
                    useWine=TRUE)
+
+## MCMC Analysis
+library("coda")
+pumps.mcmc <- as.mcmc(pumps.sim$chain1)
+summary(pumps.mcmc)
+effectiveSize(pumps.mcmc)
+
 #endif
 }
 }

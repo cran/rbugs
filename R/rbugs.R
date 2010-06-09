@@ -30,17 +30,16 @@ rbugs <- function(data, inits, paramSet, model,
                   cleanBugsWorkingDir = FALSE,
                   genFilesOnly = FALSE,
                   verbose = FALSE,
-                  seed=31
+                  seed=NULL
                   ## "/var/scratch/jyan/wine/wine-20031016/wine"
                   ){
   ##  start.time <- Sys.time ()
-  linbugs = OpenBugs ##Modified by Marcos
+  ##linbugs = OpenBugs ##Modified by Marcos
   Windows = FALSE ##Modified by Marcos
   os.type <- .Platform$OS.type
   if (os.type == "windows") {
     if (!file.exists(bugs))
       stop(paste("BUGS executable", bugs, "does not exists."))
-    #linbugs <- FALSE ##Modified by Marcos
     Windows = TRUE ##Modified by Marcos
   }
   else if (os.type == "unix") {
@@ -49,7 +48,7 @@ rbugs <- function(data, inits, paramSet, model,
         stop(paste("wine executable", wine, "does not exists."))
       ## how to check the existence of WinBUGS???
     }
-    else { ## use linbugs!
+    else { ## use OpenBugs!
       if (length(bugs) == 0) bugs <- system("which OpenBUGS", TRUE)
       if (length(bugs) == 0)
         stop(paste("BUGS executable", bugs, "does not exists."))
@@ -90,11 +89,11 @@ rbugs <- function(data, inits, paramSet, model,
   genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
                 model.file, data.file, inits.files,
                 workingDir, bugsWorkingDir,
-                script.file, debug, useWine, linbugs, Windows, seed) ##Modified by Marcos
+                script.file, debug, useWine, OpenBugs, Windows, seed) ##Modified by Marcos
 
   ## change line breaks from "\n" to "\r\n"
-  ## otherwise, linbugs would hang!!
-  if (linbugs) {
+  ## otherwise, OpenBugs would hang!!
+  if (OpenBugs) {
     ## trLbr(script.file)
     ## spend three hours to figure out that script file doesn't need it!
     trLbr(model.file)
@@ -108,11 +107,26 @@ rbugs <- function(data, inits, paramSet, model,
     return(TRUE)
   }
   if (useWine) script.file <- gsub(workingDir, bugsWorkingDir, script.file)
-  runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, linbugs, Windows, verbose)
+  runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, OpenBugs, Windows, verbose)
 
   ## collect the output
-  out <- getBugsOutput(n.chains, workingDir, linbugs)
-  out
+  out <- getBugsOutput(n.chains, workingDir, OpenBugs)
+  all <- list (n.chains=n.chains, n.iter=n.iter, n.burnin=n.burnin, ##Modified by Marcos
+               n.thin=n.thin, n.keep=out[[n.chains+1]], n.sims=out[[n.chains+2]]) ##Modified by Marcos
+  out <- out[-(n.chains+2)] ##Modified by Marcos
+  out <- out[-(n.chains+1)] ##Modified by Marcos
+  all <- c(all, out) ##Modified by Marcos 
+  class(all) <- "rbugs" ##Modified by Marcos
+  
+  if(cleanBugsWorkingDir) { ##Modified by Marcos
+    fnames <- getCodaFileNames(n.chains, workingDir, OpenBugs) ##Modified by Marcos
+    coda.files <- c(fnames$codaIndexFile, fnames$codaFiles) ##Modified by Marcos
+    log.file <- file.path(workingDir, "log.txt") ##Modified by Marcos
+    file.remove(c(model.file, log.file, data.file, ##Modified by Marcos
+                  inits.files, script.file, coda.files)) ##Modified by Marcos
+  }
+ 
+  all
 }
 
 
@@ -134,7 +148,7 @@ genInitsFile <- function(n.chains, inits, initsFileStem) {
   for (i in 1:n.chains) {
     file <- paste(initsFileStem, i, ".txt", sep="")
     if (is.function(inits)) cat(format4Bugs(inits()), file=file, fill = TRUE)
-    else cat(format4Bugs(inits[[i]]), file=file, fill = TRUE)
+    else cat(format4Bugs(inits[[1]]), file=file, fill = TRUE)
   }
 }
 
@@ -146,13 +160,13 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
                     workingDir,
                     useWine=FALSE,
                     wine = Sys.getenv("WINE"),
-                    linbugs=TRUE,
+                    OpenBugs=TRUE,
                     Windows=TRUE, ## Modified by Marcos
                     verbose = TRUE) {
 #  BUGS <- Sys.getenv("BUGS")
 #  if (!file.exists(BUGS)) stop(paste(BUGS, "does not exists."))
- # if (!linbugs) {
-  if (Windows) { ## Modified by Marcos
+ # if (!OpenBugs) {
+  if (Windows || useWine) { ## Modified by Marcos
     if (is.na(pmatch("\"", bugs))) bugs <- paste("\"", bugs, "\"", sep="")
     if (is.na(pmatch("\"", script))) script <- paste("\"", script, "\"", sep="")
     command <- paste(bugs, "/par", script)
@@ -178,7 +192,7 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
   
   
   ## clean up previous coda files
-  fnames <- getCodaFileNames(n.chains, workingDir, linbugs)
+  fnames <- getCodaFileNames(n.chains, workingDir, OpenBugs)
   coda.files <- c(fnames$codaIndexFile, fnames$codaFiles)
 ##   coda.files <- paste ("coda", 1:n.chains, ".txt", sep="")
 ##   coda.files <- c("codaIndex.txt", coda.files)
@@ -204,10 +218,10 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
 
 
 #### functions to get the output
-getCodaFileNames <- function(n.chains, workingDir, linbugs) {
-  CODA <- if (linbugs) "codaCODA" else "coda"
-  INDEX <- if (linbugs) "index" else "Index"
-  CHAIN <- if (linbugs) "chain" else NULL
+getCodaFileNames <- function(n.chains, workingDir, OpenBugs) {
+  CODA <- if (OpenBugs) "codaCODA" else "coda"
+  INDEX <- if (OpenBugs) "index" else "Index"
+  CHAIN <- if (OpenBugs) "chain" else NULL
   coda  <- file.path(workingDir, CODA)
   codaFiles <- paste(coda, CHAIN, 1:n.chains, ".txt", sep="")
   codaIndexFile <- paste(coda, INDEX, ".txt", sep="")
@@ -215,11 +229,11 @@ getCodaFileNames <- function(n.chains, workingDir, linbugs) {
 }
 
 
-getBugsOutput <- function(n.chains, workingDir, linbugs=TRUE) {
-  fnames <- getCodaFileNames(n.chains, workingDir, linbugs)
+getBugsOutput <- function(n.chains, workingDir, OpenBugs=TRUE) {
+  fnames <- getCodaFileNames(n.chains, workingDir, OpenBugs)
   codaFiles <- fnames$codaFiles
   codaIndexFile <- fnames$codaIndexFile
-  if (linbugs)  sep <- " "  else sep <- "\t"
+  if (OpenBugs)  sep <- " "  else sep <- "\t"
   codaIndex <- read.table(codaIndexFile, header=FALSE,
                           sep=sep, as.is=TRUE)
 
@@ -227,13 +241,23 @@ getBugsOutput <- function(n.chains, workingDir, linbugs=TRUE) {
   nodes <- codaIndex[, 1]
   n.param <- length(nodes)
   output <- list()
+  chain.name <- "chain1"         ##Modified by Marcos
+  if (n.chains > 1){             ##Modified by Marcos
+   for (i in 2:n.chains) {       ##Modified by Marcos
+   k <- paste("chain",i,sep="")  ##Modified by Marcos
+   chain.name <- c(chain.name,k) ##Modified by Marcos
+   }                             ##Modified by Marcos
+  }                              ##Modified by Marcos
   for (i in 1:n.chains) {
     foo <- read.table(codaFiles[i], header=FALSE)
     iter <- foo[1:n.keep, 1]
     vals <- matrix(foo[,2], n.keep, n.param)
     dat <- as.data.frame(cbind(iter, vals))
     names(dat) <- c("iter", nodes)
-    output[[i]] <- dat
+    output[[chain.name[i]]] <- dat
   }    
+  
+  output[[i+1]] <- n.keep  ##Modified by Marcos
+  output[[i+2]] <- n.keep*n.chains ##Modified by Marcos
   output
 }

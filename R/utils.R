@@ -148,4 +148,3 @@ filePathAsAbsolute <- function (x) {
     file.path(getwd(), basename(epath))
   }
 }
-

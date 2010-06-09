@@ -38,13 +38,16 @@ genBugsScript <-
            script, #output
            debug=FALSE,
            useWine=FALSE,
-           linbugs=TRUE,
+           OpenBugs=TRUE,
            Windows=TRUE, ## Modified by Marcos
-           seed=31 ## This number cannot be 314 or larger. How strange!
+           seed=NULL ## This number cannot be 314 or larger. How strange!
            ) {
   if (n.chains != length(inits.files)) stop("length(inits.files) should equal n.chains.")
   ## n.iter <- n.burnin + n.thin * n.keep
 
+  if(length(seed)==0) ## Modified by Marcos
+        seed = floor(runif(1)*314) ## Modified by Marcos
+ 
   ## add deviance to the paramSet list
   paramSet <- c(paramSet, "deviance")
 
@@ -53,7 +56,7 @@ genBugsScript <-
     if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
     else workingDir <- bugsWorkingDir
   }
-  if (linbugs) useWine <- FALSE
+  if (OpenBugs) useWine <- FALSE
   ## necessary if useWine == TRUE
   if (useWine) {
     model.file <- sub(workingDir, bugsWorkingDir, model.file)
@@ -63,7 +66,7 @@ genBugsScript <-
   }
 
   ## attach the command list
-  comm <- ScriptCommands(linbugs)
+  comm <- ScriptCommands(OpenBugs)
   LBR <- comm["LBR"]
   ## attach(comm)
   ## on.exit(detach(comm))
@@ -74,7 +77,7 @@ genBugsScript <-
   logfile <- file.path(bugsWorkingDir, "log.txt")
   ## note that the order or arguments to INITS are different
   ## in WinBUGS and OpenBUGS
-  initlist <- if (linbugs) paste(comm["INITS"], "(", "'", inits.files, "', ", 1:n.chains, ")", LBR, sep="") else paste(comm["INITS"], "(", 1:n.chains, ", '", inits.files, "')", LBR, sep="")
+  initlist <- if (OpenBugs) paste(comm["INITS"], "(", "'", inits.files, "', ", 1:n.chains, ")", LBR, sep="") else paste(comm["INITS"], "(", 1:n.chains, ", '", inits.files, "')", LBR, sep="")
   savelist <- paste(comm["SET"], "(", paramSet, ")", LBR, sep="")
   ## write out to script.txt
   nburn <- ceiling(n.burnin / n.thin)
@@ -98,11 +101,11 @@ genBugsScript <-
        ## "save ('", logodc, "')\n", 
        ## comm["SAVE"], "('", logfile, "')", LBR,
        ## modelSaveLog is only available on windows.
-       ##if (linbugs) c(comm["QUIT"], "()", LBR)
+       ##if (OpenBugs) c(comm["QUIT"], "()", LBR)
        if (!Windows) c(comm["QUIT"], "()", LBR), ## Modified by Marcos
        ##else c("modelSaveLog", "('", logfile, "')", LBR),
        if (Windows) c(comm["SAVE"], "('", logfile, "')", LBR), ## Modified by Marcos
-       if (Windows && linbugs) c(comm["QUIT"], "('yes')", LBR), ## Modified by Marcos
+       if (Windows && OpenBugs) c(comm["QUIT"], "('yes')", LBR), ## Modified by Marcos
        file=script, sep="", append=FALSE)
-  if (!debug && !linbugs) cat (comm["QUIT"], "()", LBR, sep="", file=script, append=TRUE) ## Modified by Marcos
+  if (!debug && !OpenBugs) cat (comm["QUIT"], "()", LBR, sep="", file=script, append=TRUE) ## Modified by Marcos
 }
