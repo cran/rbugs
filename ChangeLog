@@ -1,3 +1,8 @@
+2010-06-17 (0.4-3) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Included the rbugs2coda function to convert
+  the rbugs output to a coda format.
+
 2010-06-09 (0.4-2) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
 
   * Set seed to be random if not specified by the

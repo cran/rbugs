@@ -41,7 +41,7 @@ pumps.sim <- rbugs(data = pumps.data, inits, parameters,
 
 ## MCMC Analysis
 library("coda")
-pumps.mcmc <- as.mcmc(pumps.sim$chain1)
+pumps.mcmc <- rbugs2coda(schools.sim)
 summary(pumps.mcmc)
 effectiveSize(pumps.mcmc)
 

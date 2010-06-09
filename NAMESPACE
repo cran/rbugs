@@ -3,4 +3,5 @@ export(rbugs,
        runBugs,
        print.rbugs,
        getBugsOutput,
-       format4Bugs)
+       format4Bugs,
+       rbugs2coda)

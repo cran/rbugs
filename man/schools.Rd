@@ -74,8 +74,7 @@ schools.sim <- rbugs(data=schools.data, inits, parameters,
 
 ## MCMC analysis
 library("coda")
-schools.mcmc <- mcmc.list(as.mcmc(schools.sim$chain1),as.mcmc(schools.sim$chain2),
-                          as.mcmc(schools.sim$chain3))
+schools.mcmc <- rbugs2coda(schools.sim)
 summary(schools.mcmc)
 effectiveSize(schools.mcmc)
 gelman.diag(schools.mcmc)
@@ -98,8 +97,7 @@ schools.sim <- rbugs(data=schools.data, inits, parameters,
 
 ##MCMC analysis
 library("coda")
-schools.mcmc <- mcmc.list(as.mcmc(schools.sim$chain1),as.mcmc(schools.sim$chain2),
-                          as.mcmc(schools.sim$chain3))
+schools.mcmc <- rbugs2coda(schools.sim)
 summary(schools.mcmc)
 effectiveSize(schools.mcmc)
 gelman.diag(schools.mcmc)

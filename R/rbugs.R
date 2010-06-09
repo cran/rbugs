@@ -250,10 +250,12 @@ getBugsOutput <- function(n.chains, workingDir, OpenBugs=TRUE) {
   }                              ##Modified by Marcos
   for (i in 1:n.chains) {
     foo <- read.table(codaFiles[i], header=FALSE)
-    iter <- foo[1:n.keep, 1]
+#    iter <- foo[1:n.keep, 1]
     vals <- matrix(foo[,2], n.keep, n.param)
-    dat <- as.data.frame(cbind(iter, vals))
-    names(dat) <- c("iter", nodes)
+#    dat <- as.data.frame(cbind(iter, vals))
+     dat <- as.data.frame(vals)
+#    names(dat) <- c("iter", nodes)
+    names(dat) <- nodes
     output[[chain.name[i]]] <- dat
   }    
   
