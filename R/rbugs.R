@@ -44,6 +44,7 @@ rbugs <- function(data, inits, paramSet, model,
   }
   else if (os.type == "unix") {
     if (useWine) {
+      Windows = TRUE ##Modified by Marcos
       if (!file.exists(wine))
         stop(paste("wine executable", wine, "does not exists."))
       ## how to check the existence of WinBUGS???
@@ -207,6 +208,7 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
   ## execute it!
   err <- system(command)
   if (err == -1) stop("System call to BUGS failed.")
+  if (err == 256) stop("System call to BUGS failed.") ## Modified by Marcos
   ## show log
   if (verbose) file.show(file.path(workingDir, "log.txt"))
 

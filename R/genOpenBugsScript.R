@@ -102,9 +102,10 @@ genBugsScript <-
        ## comm["SAVE"], "('", logfile, "')", LBR,
        ## modelSaveLog is only available on windows.
        ##if (OpenBugs) c(comm["QUIT"], "()", LBR)
-       if (!Windows) c(comm["QUIT"], "()", LBR), ## Modified by Marcos
+       if (!Windows) c(comm["QUIT"], "('yes')", LBR), ## Modified by Marcos
        ##else c("modelSaveLog", "('", logfile, "')", LBR),
        if (Windows) c(comm["SAVE"], "('", logfile, "')", LBR), ## Modified by Marcos
+       ##if (Windows && OpenBugs && !debug) c(comm["QUIT"], "('yes')", LBR), ## Modified by Marcos
        if (Windows && OpenBugs) c(comm["QUIT"], "('yes')", LBR), ## Modified by Marcos
        file=script, sep="", append=FALSE)
   if (!debug && !OpenBugs) cat (comm["QUIT"], "()", LBR, sep="", file=script, append=TRUE) ## Modified by Marcos

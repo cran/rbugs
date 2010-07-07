@@ -29,14 +29,14 @@ parameters <- c("theta", "alpha", "beta")
 pumps.sim <- rbugs(data = pumps.data, inits, parameters,
                    pumps.model, n.chains = 1, n.iter = 1000,
                    bugs = "C:/Program Files/WinBUGS14/WinBUGS14.exe",
-                   bugsWorkingDir="C:/TEMP/rbugs",
+                   bugsWorkingDir="C:/TEMP/rbugs/",
                    OpenBugs = FALSE)
 
 ## Windows using OpenBUGS
 pumps.sim <- rbugs(data = pumps.data, inits, parameters,
                    pumps.model, n.chains = 1, n.iter = 1000,
                    bugs = "C:/Program Files/OpenBugs310/OpenBugs.exe",
-                   bugsWorkingDir="C:/TEMP/rbugs",
+                   bugsWorkingDir="C:/TEMP/rbugs/",
                    OpenBugs=TRUE)
 
 ## MCMC Analysis
@@ -62,7 +62,7 @@ effectiveSize(pumps.mcmc)
 pumps.sim <- rbugs(data = pumps.data, inits, parameters, 
                    pumps.model, n.chains = 1, n.iter = 1000,
                    workingDir="/var/scratch/jyan/c/tmp",
-                   bugsWorkingDir="c:/tmp",
+                   bugsWorkingDir="c:/tmp/",
                    useWine=TRUE)
 
 ## MCMC Analysis

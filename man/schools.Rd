@@ -53,8 +53,8 @@ file.show(schools.bug)
 
 schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
-                     workingDir="/var/scratch/jyan/c/tmp",
-                     bugsWorkingDir="c:/tmp",
+                     workingDir="/var/scratch/jyan/c/tmp/",
+                     bugsWorkingDir="c:/tmp/",
                      useWine=TRUE,
                      wine="/var/scratch/jyan/wine-20040408/wine",
                      debug=TRUE)
@@ -63,13 +63,13 @@ schools.sim <- rbugs(data=schools.data, inits, parameters,
 schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
                      bugs="~/scratch/OpenBUGS310/bin/OpenBUGS",
-                     bugsWorkingDir="~/scratch/tmp",
+                     bugsWorkingDir="~/scratch/tmp/",
                      OpenBugs=TRUE)
                      
 ## generate files only
 schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
-                     bugsWorkingDir=tempdir(),
+                     bugsWorkingDir="~/scratch/tmp/",
                      OpenBugs=TRUE, genFilesOnly=TRUE)
 
 ## MCMC analysis
@@ -85,14 +85,14 @@ gelman.diag(schools.mcmc)
 schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
                      bugs="C:/Program Files/WinBUGS14/WinBUGS14.exe",
-                     bugsWorkingDir="C:/temp", 
+                     bugsWorkingDir="C:/temp/", 
                      OpenBugs = FALSE)
                      
 ## Windows using OpenBUGS
 schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
                      bugs="C:/Program Files/OpenBugs310/OpenBugs.exe",
-                     bugsWorkingDir="C:/temp",
+                     bugsWorkingDir="C:/temp/",
                      OpenBugs=TRUE)
 
 ##MCMC analysis
