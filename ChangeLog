@@ -1,3 +1,15 @@
+2010-09-28 (0.4-6) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Fixed the loading coda file in getBugsOutput 
+  function when data is saved from OpenBugs using
+  the interface.
+
+2010-09-28 (0.4-5) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Input the generation of the "rbugs" class
+  to the getBugsOutput function.
+
+
 2010-07-07 (0.4-4) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
 
   * Fix the debug and dic functionality for

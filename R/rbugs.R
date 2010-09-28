@@ -111,13 +111,18 @@ rbugs <- function(data, inits, paramSet, model,
   runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, OpenBugs, Windows, verbose)
 
   ## collect the output
-  out <- getBugsOutput(n.chains, workingDir, OpenBugs)
-  all <- list (n.chains=n.chains, n.iter=n.iter, n.burnin=n.burnin, ##Modified by Marcos
-               n.thin=n.thin, n.keep=out[[n.chains+1]], n.sims=out[[n.chains+2]]) ##Modified by Marcos
-  out <- out[-(n.chains+2)] ##Modified by Marcos
-  out <- out[-(n.chains+1)] ##Modified by Marcos
-  all <- c(all, out) ##Modified by Marcos 
-  class(all) <- "rbugs" ##Modified by Marcos
+#  out <- getBugsOutput(n.chains, workingDir, OpenBugs)
+#  all <- list (n.chains=n.chains, n.iter=n.iter, n.burnin=n.burnin, ##Modified by Marcos
+#               n.thin=n.thin, n.keep=out[[n.chains+1]], n.sims=out[[n.chains+2]]) ##Modified by Marcos
+#  out <- out[-(n.chains+2)] ##Modified by Marcos
+#  out <- out[-(n.chains+1)] ##Modified by Marcos
+#  all <- c(all, out) ##Modified by Marcos 
+#  class(all) <- "rbugs" ##Modified by Marcos
+
+  all <- getBugsOutput(n.chains, workingDir, OpenBugs)  ##Modified by Marcos
+  all$n.iter = n.iter                                   ##Modified by Marcos
+  all$n.burnin = n.burnin                               ##Modified by Marcos
+  all$n.thin = n.thin                                   ##Modified by Marcos
   
   if(cleanBugsWorkingDir) { ##Modified by Marcos
     fnames <- getCodaFileNames(n.chains, workingDir, OpenBugs) ##Modified by Marcos
@@ -240,6 +245,13 @@ getBugsOutput <- function(n.chains, workingDir, OpenBugs=TRUE) {
                           sep=sep, as.is=TRUE)
 
   n.keep <- codaIndex[1, 3] - codaIndex[1, 2] + 1
+  ## If data is saved using the OpenBugs interface it may come as "\t" sep
+  if(length(n.keep) == 0){                                 ##Modified by Marcos
+    sep <- "\t"                                            ##Modified by Marcos
+    codaIndex <- read.table(codaIndexFile, header=FALSE,   ##Modified by Marcos
+                          sep=sep, as.is=TRUE)             ##Modified by Marcos
+    n.keep <- codaIndex[1, 3] - codaIndex[1, 2] + 1        ##Modified by Marcos
+  }
   nodes <- codaIndex[, 1]
   n.param <- length(nodes)
   output <- list()
@@ -263,5 +275,14 @@ getBugsOutput <- function(n.chains, workingDir, OpenBugs=TRUE) {
   
   output[[i+1]] <- n.keep  ##Modified by Marcos
   output[[i+2]] <- n.keep*n.chains ##Modified by Marcos
-  output
+
+  all <- list (n.chains=n.chains, n.iter=NA, n.burnin=NA, ##Modified by Marcos
+               n.thin=NA, n.keep=output[[i+1]], n.sims=output[[i+2]]) ##Modified by Marcos
+  output <- output[-(n.chains+2)] ##Modified by Marcos
+  output <- output[-(n.chains+1)] ##Modified by Marcos
+  all <- c(all, output) ##Modified by Marcos 
+  class(all) <- "rbugs" ##Modified by Marcos
+
+  all
+  #output
 }
