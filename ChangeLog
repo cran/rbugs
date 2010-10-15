@@ -1,3 +1,9 @@
+2010-10-15 (0.4-7) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Fixed the log.txt generating problem in Linux
+  the log.txt file is necessary to get the DIC output.
+  (thanks to Dr Stefano Conti)
+  
 2010-09-28 (0.4-6) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
 
   * Fixed the loading coda file in getBugsOutput 

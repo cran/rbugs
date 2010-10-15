@@ -53,6 +53,7 @@ rbugs <- function(data, inits, paramSet, model,
       if (length(bugs) == 0) bugs <- system("which OpenBUGS", TRUE)
       if (length(bugs) == 0)
         stop(paste("BUGS executable", bugs, "does not exists."))
+      bugs <- filePathAsAbsolute(bugs) ##Modified by Marcos 
     }
   }
   else warning("This function has not been tested on mac-os.")
@@ -178,7 +179,9 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
     command <- paste(bugs, "/par", script)
   }
   else {
-    command <- paste(bugs, "< ", script, "> run.out")
+    log.file <- file.path(workingDir, "log.txt") ##Modified by Marcos
+    #file.create(log.file,showWarnings = FALSE) ##Modified by Marcos
+    command <- paste(bugs, "<", script, ">", log.file)
   }
   if (useWine) {
     command <- paste(wine, command)
@@ -207,7 +210,7 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
     ## cat ("Bugs did not run correctly.\n", file=coda.files[i], append=FALSE)
    if (file.exists(i)) file.remove(i)
   }
-  log.file <- file.path(workingDir, "log.txt")
+  log.file <- file.path(workingDir, "log.txt") ##Modified by Marcos
   if (file.exists(log.file)) file.remove(log.file)
   
   ## execute it!
@@ -215,7 +218,7 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
   if (err == -1) stop("System call to BUGS failed.")
   if (err == 256) stop("System call to BUGS failed.") ## Modified by Marcos
   ## show log
-  if (verbose) file.show(file.path(workingDir, "log.txt"))
+  if (verbose) file.show(log.file) ##Modified by Marcos
 
   if (!file.exists(coda.files[1])){
     if (Windows) warning("Number of iterations may be to small") ## Modified by Marcos
