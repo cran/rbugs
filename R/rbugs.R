@@ -152,10 +152,19 @@ genDataFile <- function(dataList, dataFile) {
 
 
 genInitsFile <- function(n.chains, inits, initsFileStem) {
-  for (i in 1:n.chains) {
-    file <- paste(initsFileStem, i, ".txt", sep="")
-    if (is.function(inits)) cat(format4Bugs(inits()), file=file, fill = TRUE)
-    else cat(format4Bugs(inits[[1]]), file=file, fill = TRUE)
+  if(length(inits) == n.chains){   #Modified by Marcos
+     for (i in 1:n.chains) {
+       file <- paste(initsFileStem, i, ".txt", sep="")
+       if (is.function(inits)) cat(format4Bugs(inits()), file=file, fill = TRUE)
+       else cat(format4Bugs(inits[[i]]), file=file, fill = TRUE) #Modified by Marcos
+     }
+  }
+  else {                           #Modified by Marcos
+     for (i in 1:n.chains) {
+       file <- paste(initsFileStem, i, ".txt", sep="")
+       if (is.function(inits)) cat(format4Bugs(inits()), file=file, fill = TRUE)
+       else cat(format4Bugs(inits[[1]]), file=file, fill = TRUE) #Modified by Marcos
+     }
   }
 }
 

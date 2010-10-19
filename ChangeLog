@@ -1,3 +1,8 @@
+2010-10-19 (0.4-8) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Fixed the problem when generating intial files.
+  (thanks to Dr Stefano Conti)
+
 2010-10-15 (0.4-7) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
 
   * Fixed the log.txt generating problem in Linux
