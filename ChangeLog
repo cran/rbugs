@@ -1,3 +1,9 @@
+2011-01-01 (0.4-9) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Fixed the problem of out of range random seed 
+    when generating initial seed for OpenBUGS.
+  (thanks to Wen Huang)
+
 2010-10-19 (0.4-8) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
 
   * Fixed the problem when generating intial files.

@@ -40,13 +40,13 @@ genBugsScript <-
            useWine=FALSE,
            OpenBugs=TRUE,
            Windows=TRUE, ## Modified by Marcos
-           seed=NULL ## This number cannot be 314 or larger. How strange!
+           seed=NULL ## This number cannot be < -148 or >148. How strange!
            ) {
   if (n.chains != length(inits.files)) stop("length(inits.files) should equal n.chains.")
   ## n.iter <- n.burnin + n.thin * n.keep
 
   if(length(seed)==0) ## Modified by Marcos
-        seed = floor(runif(1)*314) ## Modified by Marcos
+        seed = floor(runif(1,-148,149)) ## Modified by Marcos
  
   ## add deviance to the paramSet list
   paramSet <- c(paramSet, "deviance")
