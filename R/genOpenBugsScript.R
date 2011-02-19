@@ -33,11 +33,9 @@ genBugsScript <-
            model.file,
            data.file,
            inits.files,
-           workingDir=NULL, #getwd(),
            bugsWorkingDir=getwd(), ## needs to be readable for BUGS
            script, #output
            debug=FALSE,
-           useWine=FALSE,
            OpenBugs=TRUE,
            Windows=TRUE, ## Modified by Marcos
            seed=NULL ## This number cannot be < -148 or >148. How strange!
@@ -52,18 +50,21 @@ genBugsScript <-
   paramSet <- c(paramSet, "deviance")
 
   ## setup workingDir
-  if (is.null(workingDir)) {
-    if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
-    else workingDir <- bugsWorkingDir
-  }
-  if (OpenBugs) useWine <- FALSE
+  workingDir <- bugsWorkingDir
+
+  #if (is.null(workingDir)) {
+    #if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
+    #else workingDir <- bugsWorkingDir
+  #}
+
+  #if (OpenBugs) useWine <- FALSE
   ## necessary if useWine == TRUE
-  if (useWine) {
-    model.file <- sub(workingDir, bugsWorkingDir, model.file)
-    data.file <- sub(workingDir, bugsWorkingDir, data.file)
-    for (i in 1:length(inits.files))
-      inits.files[i] <- sub(workingDir, bugsWorkingDir, inits.files[i])
-  }
+  #if (useWine) {
+  #  model.file <- sub(workingDir, bugsWorkingDir, model.file)
+  #  data.file <- sub(workingDir, bugsWorkingDir, data.file)
+  #  for (i in 1:length(inits.files))
+  #    inits.files[i] <- sub(workingDir, bugsWorkingDir, inits.files[i])
+  #}
 
   ## attach the command list
   comm <- ScriptCommands(OpenBugs)

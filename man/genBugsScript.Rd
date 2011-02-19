@@ -7,8 +7,8 @@
 \usage{
 genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
               model.file, data.file, inits.files,
-              workingDir=NULL, bugsWorkingDir=getwd(),
-              script, debug = FALSE, useWine=FALSE,
+              bugsWorkingDir=getwd(),
+              script, debug = FALSE,
               OpenBugs=TRUE, Windows=TRUE, seed=NULL)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,15 +27,12 @@ genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
     should end with .txt to be recognizable by BUGS. }
   \item{inits.files}{ A vector of file names of initial values. They
     should end with .txt to be recognizable by BUGS.}
-  \item{workingDir}{ A character string specifying the directory to
+  \item{bugsWorkingDir}{ A character string specifying the directory to
     store temporary files for running BUGS.}
-  \item{bugsWorkingDir}{ A character string specifying the directory
-    which is recognizable by windows, if using wine.}
   \item{script}{ A character string naming the files to print the script
     to. It must end with .txt to be recognizable by BUGS.}
   \item{debug}{ A logical value indicating whether or not closing the
     BUGS window after running the script.}
-  \item{useWine}{ If TRUE, BUGS is used via wine.}
   \item{OpenBugs}{ If TRUE, OpenBugs is used. } %- Modified by Marcos
   \item{Windows}{ If TRUE, Windows plataform is used. } %- Modified by Marcos
   \item{seed}{ An integer of random number seed.} 

@@ -5,8 +5,7 @@
   Create the system command to run BUGS and execute it.
 }
 \usage{
-runBugs(bugs=Sys.getenv("BUGS"), script, n.chains, workingDir,
-        useWine=FALSE, wine=Sys.getenv("WINE"),
+runBugs(bugs=system("which OpenBUGS", TRUE), script, n.chains, workingDir,
         OpenBugs = TRUE, Windows=TRUE, verbose = TRUE)
 }
 \arguments{
@@ -19,9 +18,6 @@ runBugs(bugs=Sys.getenv("BUGS"), script, n.chains, workingDir,
   \item{n.chains}{The number of MCMC chains.}
   \item{workingDir}{The working directory where the output files from
     BUGS are stored.}
-  \item{useWine}{ A logical value indicating if wine is to be used.}
-  \item{wine}{ A character string specifying the full name (including
-    path) of the wine executable.}
   \item{OpenBugs}{ If TRUE, OpenBugs is used. }
   \item{Windows}{ If TRUE, Windows plataform is used. }
   \item{verbose}{If TRUE, print the log file from BUGS.}

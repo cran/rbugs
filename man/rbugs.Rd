@@ -12,14 +12,12 @@ rbugs(data, inits, paramSet, model,
       n.thin = max(1, floor(n.chains * (n.iter - n.burnin)/1000)),
       dic = FALSE,
       debug = FALSE,
-      bugs = Sys.getenv("BUGS"),
-      workingDir = NULL, 
+      bugs = system("which OpenBUGS", TRUE),
       bugsWorkingDir,
-      useWine = FALSE, wine = Sys.getenv("WINE"),
-      OpenBugs = TRUE, %- Modified by Marcos
+      OpenBugs = TRUE,
       cleanBugsWorkingDir = FALSE,
       genFilesOnly = FALSE,
-      verbose = FALSE, seed = NULL)%- Modified by Marcos
+      verbose = FALSE, seed = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,13 +35,7 @@ rbugs(data, inits, paramSet, model,
   \item{debug}{ a logical value indicating whether or not closing the
     BUGS window }
   \item{bugs}{ the full name (including the path) of the BUGS executable }
-  \item{workingDir}{ a directory to store all the intermediate files }
-  \item{bugsWorkingDir}{ required, the nominal name of the working directory,
-    which is the same as workingDir if useWine is "FALSE". If useWine is
-    "TRUE", it should be a directory which is recognizable by the
-    Windows system though wine. }
-  \item{useWine}{ a logical value with "TRUE" meaning wine is used }
-  \item{wine}{ if useWine==TRUE, the full name of wine }
+  \item{bugsWorkingDir}{ a directory to store all the intermediate files }
   \item{OpenBugs}{ if TRUE, OpenBugs is used } %- Modified by Marcos
   \item{cleanBugsWorkingDir}{ if TRUE, the generated files will be
     removed from the bugsWorkingDir}

@@ -18,43 +18,33 @@ rbugs <- function(data, inits, paramSet, model,
                   dic=FALSE,
                   ## configuration options
                   debug=FALSE,
-                  bugs=Sys.getenv("BUGS"),
+                  bugs= system("which OpenBUGS", TRUE),
                   ##"c:/Program Files/WinBUGS14/WinBUGS14.exe",
-                  workingDir = NULL, #getwd(),
+                  #workingDir = NULL, #getwd(),
                   ##"/var/scratch/jyan/c/tmp", # native
                   bugsWorkingDir, # required argument
                   ##"c:/tmp",
-                  useWine = FALSE, 
-                  wine = Sys.getenv("WINE"),
                   OpenBugs = TRUE, ##Modified by Marcos ##Using OpenBugs or not???
                   cleanBugsWorkingDir = FALSE,
                   genFilesOnly = FALSE,
                   verbose = FALSE,
                   seed=NULL
-                  ## "/var/scratch/jyan/wine/wine-20031016/wine"
                   ){
   ##  start.time <- Sys.time ()
   ##linbugs = OpenBugs ##Modified by Marcos
   Windows = FALSE ##Modified by Marcos
   os.type <- .Platform$OS.type
+  if(length(bugsWorkingDir) == 0) stop("It is required to specify the bugsWorkingDir")
   if (os.type == "windows") {
     if (!file.exists(bugs))
       stop(paste("BUGS executable", bugs, "does not exists."))
     Windows = TRUE ##Modified by Marcos
   }
   else if (os.type == "unix") {
-    if (useWine) {
-      Windows = TRUE ##Modified by Marcos
-      if (!file.exists(wine))
-        stop(paste("wine executable", wine, "does not exists."))
-      ## how to check the existence of WinBUGS???
-    }
-    else { ## use OpenBugs!
       if (length(bugs) == 0) bugs <- system("which OpenBUGS", TRUE)
       if (length(bugs) == 0)
         stop(paste("BUGS executable", bugs, "does not exists."))
       # bugs <- filePathAsAbsolute(bugs) ##Modified by Marcos 
-    }
   }
   else warning("This function has not been tested on mac-os.")
   
@@ -65,11 +55,8 @@ rbugs <- function(data, inits, paramSet, model,
     if (!file.exists(bugsWorkingDir)) dir.create(bugsWorkingDir)
     on.exit(if(cleanBugsWorkingDir) unlink(bugsWorkingDir, TRUE))
   }
-  if (is.null(workingDir)) {
-    if (useWine) workingDir <- driveTr(bugsWorkingDir, .DriveTable)
-    else workingDir <- bugsWorkingDir
-  }
-  else workingDir <- filePathAsAbsolute(workingDir)
+  workingDir <- bugsWorkingDir ## Modefified by Marcos
+  workingDir <- filePathAsAbsolute(workingDir)
   
   ## prepare the model file by 
   ## making a copy of model to the working directory
@@ -90,8 +77,8 @@ rbugs <- function(data, inits, paramSet, model,
   script.file <- paste(workingDir, "script.txt", sep="/")
   genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
                 model.file, data.file, inits.files,
-                workingDir, bugsWorkingDir,
-                script.file, debug, useWine, OpenBugs, Windows, seed) ##Modified by Marcos
+                bugsWorkingDir,
+                script.file, debug, OpenBugs, Windows, seed) ##Modified by Marcos
 
   ## change line breaks from "\n" to "\r\n"
   ## otherwise, OpenBugs would hang!!
@@ -108,8 +95,9 @@ rbugs <- function(data, inits, paramSet, model,
     cat("Files are generated in", workingDir, "\n")
     return(TRUE)
   }
-  if (useWine) script.file <- gsub(workingDir, bugsWorkingDir, script.file)
-  runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, OpenBugs, Windows, verbose)
+  #if (useWine) script.file <- gsub(workingDir, bugsWorkingDir, script.file)
+  #runBugs(bugs, script.file, n.chains, workingDir, useWine, wine, OpenBugs, Windows, verbose)
+  runBugs(bugs, script.file, n.chains, workingDir, OpenBugs, Windows, verbose)
 
   ## collect the output
 #  out <- getBugsOutput(n.chains, workingDir, OpenBugs)
@@ -170,19 +158,20 @@ genInitsFile <- function(n.chains, inits, initsFileStem) {
 
 
 #### run bugs
-runBugs <- function(bugs=Sys.getenv("BUGS"),
+runBugs <- function(bugs=system("which OpenBUGS", TRUE),
                     script,
                     n.chains,
                     workingDir,
-                    useWine=FALSE,
-                    wine = Sys.getenv("WINE"),
+                    #useWine=FALSE,
+                    #wine = Sys.getenv("WINE"),
                     OpenBugs=TRUE,
                     Windows=TRUE, ## Modified by Marcos
                     verbose = TRUE) {
 #  BUGS <- Sys.getenv("BUGS")
 #  if (!file.exists(BUGS)) stop(paste(BUGS, "does not exists."))
  # if (!OpenBugs) {
-  if (Windows || useWine) { ## Modified by Marcos
+ # if (Windows || useWine) { ## Modified by Marcos
+  if (Windows) { ## Modified by Marcos
     if (is.na(pmatch("\"", bugs))) bugs <- paste("\"", bugs, "\"", sep="")
     if (is.na(pmatch("\"", script))) script <- paste("\"", script, "\"", sep="")
     command <- paste(bugs, "/par", script)
@@ -192,23 +181,21 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
     #file.create(log.file,showWarnings = FALSE) ##Modified by Marcos
     command <- paste(bugs, "<", script, ">", log.file)
   }
-  if (useWine) {
-    command <- paste(wine, command)
-
-    ## put a "q" to quit from wine debugg
-    q.tmp <- tempfile("q")
-    on.exit(unlink(q.tmp))
-    cat("q\n", file=q.tmp)
-    command <- paste(command, "< ", q.tmp)
-
-    ## redirect the erorr/warning message of Wine
-    wine.warn <- tempfile("warn")
-    on.exit(unlink(wine.warn))
-    command <- paste(command, ">", wine.warn, " 2>&1 ")
-  }
-  
-  
-  
+#  if (useWine) {
+#    command <- paste(wine, command)
+#
+#    ## put a "q" to quit from wine debugg
+#    q.tmp <- tempfile("q")
+#    on.exit(unlink(q.tmp))
+#    cat("q\n", file=q.tmp)
+#    command <- paste(command, "< ", q.tmp)
+#
+#    ## redirect the erorr/warning message of Wine
+#    wine.warn <- tempfile("warn")
+#    on.exit(unlink(wine.warn))
+#    command <- paste(command, ">", wine.warn, " 2>&1 ")
+#  }
+   
   ## clean up previous coda files
   fnames <- getCodaFileNames(n.chains, workingDir, OpenBugs)
   coda.files <- c(fnames$codaIndexFile, fnames$codaFiles)

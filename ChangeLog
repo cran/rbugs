@@ -1,3 +1,9 @@
+2011-11-08 (0.5-3) Marcos Prates  <marcosop@ime.unicamp.br> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Removed WINE support
+    Fix the automatic path for OpenBUGS 
+    (in Linux)
+
 2011-06-27 (0.5-2) Marcos Prates  <marcosop@ime.unicamp.br> and Jun Yan <jyan@stat.uconn.edu>
 
   * Included the burnin and thining in the
