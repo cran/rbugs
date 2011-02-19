@@ -1,8 +1,16 @@
-2012-02-27 (0.5-7) Marcos Prates <marcosop@est.ufmg.br> and Jun Yan <jyan@stat.uconn.edu>
+2013-04-08 (0.5-9) Marcos Prates <marcosop@est.ufmg.br> and Jun Yan <jyan@stat.uconn.edu>
+
+  * fixed .path.package (deprecated) system.file
+
+2013-03-19 (0.5-8) Marcos Prates <marcosop@est.ufmg.br> and Jun Yan <jyan@stat.uconn.edu>
+
+  * fixed Rio de Janeiro example
+
+2013-02-27 (0.5-7) Marcos Prates <marcosop@est.ufmg.br> and Jun Yan <jyan@stat.uconn.edu>
 
   * add Rio de Janeiro example
 
-2012-02-27 (0.5-6) Marcos Prates <marcosop@est.ufmg.br> and Jun Yan <jyan@stat.uconn.edu>
+2013-02-27 (0.5-6) Marcos Prates <marcosop@est.ufmg.br> and Jun Yan <jyan@stat.uconn.edu>
 
   * fixed the log generation for 
     OpenBUGS in Windows plataform

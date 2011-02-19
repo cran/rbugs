@@ -31,7 +31,7 @@ inits <- function() {list (theta=rnorm(J,0,100),
                            mu.theta=rnorm(1,0,100),
                            sigma.theta=runif(1,0,100))}
 parameters <- c("theta", "mu.theta", "sigma.theta")
-schools.bug <- file.path(.path.package("rbugs"), "bugs/model", "schools.bug")
+schools.bug <- system.file("bugs/model/schools.bug", package="rbugs")
 file.show(schools.bug)
 
 \dontrun{

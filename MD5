@@ -1,5 +1,5 @@
-8057536ef9be1c2c086809e9f9ee566d *ChangeLog
-04af586246a23245220152a84e8d55d2 *DESCRIPTION
+f59e5e027afe29dbc95c3d866c3057c5 *ChangeLog
+9249f533970596ae592943b962571fbe *DESCRIPTION
 4371c52c8e060302e3f24d7dab7c2888 *NAMESPACE
 ea3e3a2501f371439e6fa5382a4ddfaa *R/genOpenBugsScript.R
 fdd8ae1f6cc1b4055ffc92fe1a1ef95f *R/print.rbugs.R
@@ -26,9 +26,9 @@ db6bb71fd0b2c175569d9c8e31776dbe *inst/bugs/model/pumps.bug
 e3c05b77ed4ec0276c7f0b3d91779399 *man/genInitsFile.Rd
 7da44a73a3595950fb07e8f9c7d42f56 *man/getBugsOutput.Rd
 0c2c97a9f9f3c6ddb5e7cff44b775272 *man/print.rbugs.Rd
-628ee078075406e2c7e23a6efa12fa3d *man/pumps.Rd
+dafd71e3361f9ca65ec37b7cd7aa43b0 *man/pumps.Rd
 ede38ce9a4c731b73fad71bacb698daf *man/rbugs.Rd
 40b98cd2843c10ee1b3da6299a1ca7ea *man/rbugs2coda.Rd
-dc4bf29847fe1de1ad03f056ae22b209 *man/rio.Rd
+92f0e84d8c9191e8c76ff3f8cef3e06b *man/rio.Rd
 1e3a55cbf8d9a6689476a6cd9985993f *man/runBugs.Rd
-fab5275b0614ccfd6b8e248bf55882e6 *man/schools.Rd
+7eb5300a39e765921c94d440ca337cd6 *man/schools.Rd

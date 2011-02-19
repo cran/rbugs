@@ -27,7 +27,7 @@ data(rio)
 
 \dontrun{
 library(spdep)
-rio.bug <- file.path(.path.package("rbugs"), "bugs/model", "dengue.bug")
+rio.bug <- system.file("bugs/model/dengue.bug", package="rbugs")
 
 ## Get the neighbor structure for Rio
 rj.nb=poly2nb(rio)
@@ -67,6 +67,9 @@ beta.aux <- rep(0,P)
 ## Generate the list with the nescessary information in the init file
 inits <- list( list(beta = beta.aux, tau.u = 1, tau.v = 1, u=u.aux, v=v.aux, Int=0.0))
 
+## Set the parameters that will be saved and returned by BUGS
+parameters <- c("beta", "tau.u", "tau.v", "RR", "Int")
+
 ## no tested examples for mac-os.
 
 #ifdef unix
@@ -74,7 +77,7 @@ rio.sim <- rbugs(data.rio, inits, parameters,
                  rio.bug, n.chains=2, n.iter=60000, 
                  n.burnin = 10000, n.thin = 10, 
                  bugs="/usr/bin/OpenBUGS",
-                 bugsWorkingDir="~/tmp/")
+                 bugsWorkingDir="/home/marcos/tmp")
 
 ## MCMC analysis
 library("coda")

@@ -16,9 +16,9 @@
 \examples{
 data(pumps)
 pumps.data <- list(t = pumps$t, x = pumps$x, N = nrow(pumps))
-pumps.model <- file.path(.path.package("rbugs"), "bugs/model", "pumps.bug")
+pumps.model <- system.file("bugs/model/pumps.bug", package="rbugs")
 file.show(pumps.model)
-pumps.inits <- file.path(.path.package("rbugs"), "bugs/inits", "pumps.txt")
+pumps.inits <- system.file("bugs/inits/pumps.txt", package="rbugs") 
 file.show(pumps.inits)
 inits <- list(dget(pumps.inits))
 parameters <- c("theta", "alpha", "beta")
