@@ -1,4 +1,11 @@
+2012-02-02 (0.5-4) Marcos Prates  <marcosop@ime.unicamp.br> and Jun Yan <jyan@stat.uconn.edu>
+
+  * changed on runBUGS() to try to run OpenBUGS 
+    at most 2 times
+
 2011-11-08 (0.5-3) Marcos Prates  <marcosop@ime.unicamp.br> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Removed WINE support
 
   * Removed WINE support
     Fix the automatic path for OpenBUGS 

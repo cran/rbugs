@@ -212,7 +212,7 @@ runBugs <- function(bugs=system("which OpenBUGS", TRUE),
   ## execute it!
   cont <- 0
   err <- -1
-  while((cont < 10) & (err != 0)){
+  while((cont < 2) & (err != 0)){
     cont <- cont + 1
     err <- system(command)
   }
