@@ -1,3 +1,8 @@
+2011-06-27 (0.5-2) Marcos Prates  <marcosop@ime.unicamp.br> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Included the burnin and thining in the
+    rbugs2coda function
+
 2011-02-19 (0.5-1) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
 
   * Fixed the problem on linux when there were a 
