@@ -53,7 +53,7 @@ rbugs <- function(data, inits, paramSet, model,
       if (length(bugs) == 0) bugs <- system("which OpenBUGS", TRUE)
       if (length(bugs) == 0)
         stop(paste("BUGS executable", bugs, "does not exists."))
-      bugs <- filePathAsAbsolute(bugs) ##Modified by Marcos 
+      # bugs <- filePathAsAbsolute(bugs) ##Modified by Marcos 
     }
   }
   else warning("This function has not been tested on mac-os.")
@@ -223,9 +223,14 @@ runBugs <- function(bugs=Sys.getenv("BUGS"),
   if (file.exists(log.file)) file.remove(log.file)
   
   ## execute it!
-  err <- system(command)
-  if (err == -1) stop("System call to BUGS failed.")
-  if (err == 256) stop("System call to BUGS failed.") ## Modified by Marcos
+  cont <- 0
+  err <- -1
+  while((cont < 10) & (err != 0)){
+    cont <- cont + 1
+    err <- system(command)
+  }
+  #if (err == -1) stop("System call to BUGS failed.")
+  if (err != 0) stop("System call to BUGS failed.") ## Modified by Marcos
   ## show log
   if (verbose) file.show(log.file) ##Modified by Marcos
 

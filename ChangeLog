@@ -1,3 +1,13 @@
+2011-02-19 (0.5-1) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Fixed the problem on linux when there were a 
+    need to recall the rbugs function to run OpenBUGS.
+
+2011-02-18 (0.5-0) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
+
+  * Fixed the problem for OpenBUGS on linux,
+   when defining the bugs path.
+
 2011-01-01 (0.4-9) Marcos Prates  <marcos.prates@uconn.edu> and Jun Yan <jyan@stat.uconn.edu>
 
   * Fixed the problem of out of range random seed 
