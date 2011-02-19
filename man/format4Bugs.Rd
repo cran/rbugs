@@ -14,7 +14,7 @@ format4Bugs(dataList, digits = 5)
 \value{
   A charactor vector of data readable by BUGS.
 }
-\author{ Jun Yan \email{jyan@stat.uiowa.edu} and Marcos Prates \email{marcos.prates@uconn.edu}}
+\author{ Jun Yan \email{jyan@stat.uiowa.edu} and Marcos Prates \email{marcosop@est.ufmg.br}}
 \examples{
 dat <- list(a = runif(1), b=rnorm(2), c=matrix(rexp(4), 2, 2))
 format4Bugs(dat)

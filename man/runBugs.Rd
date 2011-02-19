@@ -25,6 +25,6 @@ runBugs(bugs=system("which OpenBUGS", TRUE), script, n.chains, workingDir,
 \value{
   None.
 }
-\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcos.prates@uconn.edu}}
+\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcosop@est.ufmg.br}}
 \seealso{  \code{\link{rbugs}}}
 \keyword{interface}

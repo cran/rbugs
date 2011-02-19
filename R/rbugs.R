@@ -49,14 +49,14 @@ rbugs <- function(data, inits, paramSet, model,
   else warning("This function has not been tested on mac-os.")
   
   ## setup workingDir
-  bugsWorkingDir <- filePathAsAbsolute(bugsWorkingDir)
+  #bugsWorkingDir <- filePathAsAbsolute(bugsWorkingDir)
   if (is.null(bugsWorkingDir)) {
-    bugsWorkingDir <- tempfile("bugsWorkingDir")
+    bugsWorkingDir <- getwd() #tempfile("bugsWorkingDir")
     if (!file.exists(bugsWorkingDir)) dir.create(bugsWorkingDir)
     on.exit(if(cleanBugsWorkingDir) unlink(bugsWorkingDir, TRUE))
   }
   workingDir <- bugsWorkingDir ## Modefified by Marcos
-  workingDir <- filePathAsAbsolute(workingDir)
+  #workingDir <- filePathAsAbsolute(workingDir)
   
   ## prepare the model file by 
   ## making a copy of model to the working directory

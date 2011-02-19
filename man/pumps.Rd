@@ -35,7 +35,7 @@ pumps.sim <- rbugs(data = pumps.data, inits, parameters,
 ## Windows using OpenBUGS
 pumps.sim <- rbugs(data = pumps.data, inits, parameters,
                    pumps.model, n.chains = 1, n.iter = 1000,
-                   bugs = "C:/Program Files/OpenBugs310/OpenBugs.exe",
+                   bugs = "C:/Program Files/OpenBugs321/OpenBugs.exe",
                    bugsWorkingDir="C:/TEMP/rbugs/",
                    OpenBugs=TRUE)
 
@@ -47,27 +47,14 @@ effectiveSize(pumps.mcmc)
 
 #endif
 #ifdef unix
-## The workingDir must be a directory which can be seen by wine
-## The nominalWorkingDir gives the directory name recoganizable for
-## Windows.
-## The full name of the bugs and wine executables need to set.
-## In .Renviron, add lines similar to these:
-## If using WinBugs
-##   BUGS="c:/program files/winbugs14/winbugs14.exe"
-##   WINE="/var/scratch/jyan/wine-20040408/wine" 
-## If using OpenBUGS
-##   BUGS="c:/program files/OpenBUGS310/OpenBugs.exe"
-##   WINE="/var/scratch/jyan/wine-20040408/wine" 
-
 pumps.sim <- rbugs(data = pumps.data, inits, parameters, 
                    pumps.model, n.chains = 1, n.iter = 1000,
-                   workingDir="/var/scratch/jyan/c/tmp",
-                   bugsWorkingDir="c:/tmp/",
+                   workingDir="~/tmp/",
                    useWine=TRUE)
 
 ## MCMC Analysis
 library("coda")
-pumps.mcmc <- as.mcmc(pumps.sim$chain1)
+pumps.mcmc <- rbugs2coda(pumps.sim)
 summary(pumps.mcmc)
 effectiveSize(pumps.mcmc)
 

@@ -38,38 +38,15 @@ file.show(schools.bug)
 ## no tested examples for mac-os.
 
 #ifdef unix
-## Unix using WINE
-## The workingDir must be a directory which can be seen by wine
-## The nominalWorkingDir gives the directory name recoganizable for
-## Windows.
-## The full name of the bugs and wine executables need to set.
-## In .Renviron, add lines similar to these:
-## If using WinBugs
-##   BUGS="c:/program files/winbugs14/winbugs14.exe"
-##   WINE="/var/scratch/jyan/wine-20040408/wine" 
-## If using OpenBUGS
-##   BUGS="c:/program files/OpenBUGS310/OpenBugs.exe"
-##   WINE="/var/scratch/jyan/wine-20040408/wine" 
-
 schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
-                     workingDir="/var/scratch/jyan/c/tmp/",
-                     bugsWorkingDir="c:/tmp/",
-                     useWine=TRUE,
-                     wine="/var/scratch/jyan/wine-20040408/wine",
-                     debug=TRUE)
-
-## Unix using OpenBUGS
-schools.sim <- rbugs(data=schools.data, inits, parameters,
-                     schools.bug, n.chains=3, n.iter=1000,
-                     bugs="~/scratch/OpenBUGS310/bin/OpenBUGS",
-                     bugsWorkingDir="~/scratch/tmp/",
-                     OpenBugs=TRUE)
-                     
+                     bugs="/usr/bin/OpenBUGS",
+                     bugsWorkingDir="~/tmp/")
+                    
 ## generate files only
 schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
-                     bugsWorkingDir="~/scratch/tmp/",
+                     bugsWorkingDir="~/tmp/",
                      OpenBugs=TRUE, genFilesOnly=TRUE)
 
 ## MCMC analysis
@@ -91,7 +68,7 @@ schools.sim <- rbugs(data=schools.data, inits, parameters,
 ## Windows using OpenBUGS
 schools.sim <- rbugs(data=schools.data, inits, parameters,
                      schools.bug, n.chains=3, n.iter=1000,
-                     bugs="C:/Program Files/OpenBugs310/OpenBugs.exe",
+                     bugs="C:/Program Files/OpenBugs321/OpenBugs.exe",
                      bugsWorkingDir="C:/temp/",
                      OpenBugs=TRUE)
 

@@ -48,5 +48,5 @@ rbugs(data, inits, paramSet, model,
   A list with the inforamtion of the MCMC sample and each one of the \code{nChains} .
 }
 \examples{ ##see examples in \code{\link{pumps}} and \code{\link{schools}}}
-\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcos.prates@uconn.edu}}
+\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcosop@est.ufmg.br}}
 \keyword{ interface }

@@ -50,7 +50,7 @@ genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
   directory native to the operating system and a directory recognizable
   by wine. They are the same if useWine == FALSE.
 }
-\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcos.prates@uconn.edu}}
+\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcosop@est.ufmg.br}}
 \seealso{ \code{\link{genDataFile}}, \code{\link{genInitsFile}},
   \code{\link{format4Bugs}}
 }
@@ -61,14 +61,12 @@ genBugsScript(paramSet, n.chains, n.iter, n.burnin, n.thin, dic,
 script.file <- paste(tempfile("script"), ".txt", sep="")
 genBugsScript(paramSet=c("alpha", "theta"), n.chains=2, n.keep=1500,
               n.burnin=500, n.thin=1,
-              model.file="/var/scratch/c/tmp/model.txt",
-              data.file="/var/scratch/c/tmp/data.txt",
-              inits.file=c("/var/scratch/c/tmp/init1.txt",
-                           "/var/scratch/c/tmp/init2.txt"),
-              workingDir="/var/scratch/c/tmp",
-              bugsWorkingDir="c:/tmp",
-              script=script.file,
-              debug=FALSE, useWine=TRUE)
+              model.file="~/tmp/model.txt",
+              data.file="~/tmp/data.txt",
+              inits.file=c("~/tmp/init1.txt",
+                           "~/tmp/init2.txt"),
+              bugsWorkingDir=" ~/tmp/",
+              script=script.file)
 file.show(script.file)
 unlink(script.file)
 #endif
@@ -80,9 +78,8 @@ genBugsScript(paramSet=c("alpha", "theta"), n.chains=2, n.keep=1500,
               data.file="c:/tmp/data.txt",
               inits.file=c("c:/tmp/init1.txt",
                            "c:/tmp/init2.txt"),
-              workingDir="c:/tmp",
-              script=script.file,
-              debug=FALSE, useWine=TRUE)
+              bugsworkingDir="c:/tmp",
+              script=script.file)
 file.show(script.file)
 unlink(script.file)
 #endif

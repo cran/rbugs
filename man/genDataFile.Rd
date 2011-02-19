@@ -17,7 +17,7 @@ genDataFile(dataList, dataFile)
 \value{
   None.
 }
-\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcos.prates@uconn.edu}}
+\author{Jun Yan \email{jyan@stat.uconn.edu} and Marcos Prates \email{marcosop@est.ufmg.br}}
 \seealso{ \code{\link{genInitsFile}}, \code{\link{genBugsScript}},
   \code{\link{format4Bugs}}
 }
