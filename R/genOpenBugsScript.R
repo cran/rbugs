@@ -84,7 +84,7 @@ genBugsScript <-
   nburn <- ceiling(n.burnin / n.thin)
   nsamp <- ceiling((n.iter - n.burnin) / n.thin)
   cat (
-       ##"display ('log')\n",
+       if(Windows && OpenBugs) "modelDisplay ('log')\n",
        comm["CHECK"], "('", model.file, "')", LBR,
        comm["DATA"], "('", data.file, "')", LBR,
        comm["COMPILE"], "(", n.chains, ")", LBR,

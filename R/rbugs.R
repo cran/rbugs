@@ -171,6 +171,8 @@ runBugs <- function(bugs=system("which OpenBUGS", TRUE),
 #  if (!file.exists(BUGS)) stop(paste(BUGS, "does not exists."))
  # if (!OpenBugs) {
  # if (Windows || useWine) { ## Modified by Marcos
+  if(length(n.chains) == 0) stop("The number of MCMC chains in the script file must be specified")
+  if(length(workingDir) == 0) stop("A working directory must be specified")
   if (Windows) { ## Modified by Marcos
     if (is.na(pmatch("\"", bugs))) bugs <- paste("\"", bugs, "\"", sep="")
     if (is.na(pmatch("\"", script))) script <- paste("\"", script, "\"", sep="")

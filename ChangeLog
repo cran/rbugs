@@ -1,3 +1,10 @@
+2012-02-27 (0.5-6) Marcos Prates <marcosop@est.ufmg.br> and Jun Yan <jyan@stat.uconn.edu>
+
+  * fixed the log generation for 
+    OpenBUGS in Windows plataform
+  * Add some user checks when running
+    runBugs()
+
 2012-02-03 (0.5-5) Marcos Prates <marcosop@est.ufmg.br> and Jun Yan <jyan@stat.uconn.edu>
 
   * fixed examples files
