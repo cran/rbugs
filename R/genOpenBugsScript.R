@@ -29,7 +29,7 @@ genBugsScript <-
            n.iter,
            n.burnin,
            n.thin,
-           dic,
+           dic = FALSE,
            model.file,
            data.file,
            inits.files,
