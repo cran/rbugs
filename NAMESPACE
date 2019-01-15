@@ -1,7 +1,12 @@
 export(rbugs, 
        genDataFile, genInitsFile, genBugsScript, 
        runBugs,
-       print.rbugs,
+#       print.rbugs,
        getBugsOutput,
        format4Bugs,
        rbugs2coda)
+
+importFrom("stats", "runif")
+importFrom("utils", "file_test", "read.table")
+S3method('print', 'rbugs')
+

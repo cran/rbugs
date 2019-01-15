@@ -82,7 +82,7 @@ driveMap <- function(config = "~/.wine/config") {
                    foo <- unlist(strsplit(x, "\""))
                    foo[length(foo)]
                  })
-  dir <- sub("%HOME%",tools:::file_path_as_absolute("~"), dir)
+  dir <- sub("%HOME%",tools::file_path_as_absolute("~"), dir)
   data.frame(drive = I(drive), path = I(dir), row.names=NULL)
 }
 
@@ -139,7 +139,7 @@ filePathAsAbsolute <- function (x) {
   epath <- path.expand(x)
   cwd <- getwd()
   on.exit(setwd(cwd))
-  if (tools:::file_test("-d", epath)) {
+  if (file_test("-d", epath)) {
     setwd(epath)
     getwd()
   }
